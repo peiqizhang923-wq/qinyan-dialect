@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吃货大转盘 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* ================================================================
+   吃货大转盘专属样式
+   ================================================================ */
+.r-wrap { display:flex; flex-direction:column; align-items:center; padding:60px 20px 50px; }
+.r-stage { position:relative; display:inline-block; }
+
+/* ---- 转盘青铜包边（多层阴影模拟错金）---- */
+.r-wheel {
+    width:510px; height:510px; border-radius:50%; position:relative;
+    transition:transform 4s cubic-bezier(0.17,0.67,0.12,0.99);
+    box-shadow:
+        0 0 0 4px #6B5B3A,
+        0 0 0 9px #8B7538,
+        0 0 0 14px #4A3820,
+        0 0 0 17px rgba(196,162,75,0.3),
+        0 8px 36px rgba(0,0,0,0.18),
+        0 18px 56px rgba(0,0,0,0.1);
+}
+/* 阴刻同心圆线 */
+.r-wheel::before {
+    content:''; position:absolute; top:28px; left:28px; right:28px; bottom:28px;
+    border-radius:50%; border:1.5px solid rgba(139,105,20,0.15); pointer-events:none; z-index:2;
+}
+.r-wheel::after {
+    content:''; position:absolute; top:50px; left:50px; right:50px; bottom:50px;
+    border-radius:50%; border:0.5px solid rgba(139,105,20,0.08); pointer-events:none; z-index:2;
+}
+
+/* ---- 鎏金飞鸟指针（顶部）---- */
+.r-ptr {
+    position:absolute; top:-52px; left:50%; transform:translateX(-50%); z-index:5;
+    width:0; height:0;
+    border-left:20px solid transparent; border-right:20px solid transparent;
+    border-top:50px solid #BF9530;
+    filter:drop-shadow(0 2px 3px rgba(139,105,20,0.4));
+}
+.r-ptr::after {
+    content:''; position:absolute; top:-56px; left:50%; transform:translateX(-50%);
+    width:10px; height:10px; border-radius:50%;
+    background:var(--red); box-shadow:0 0 6px rgba(184,58,42,0.5);
+}
+
+/* ---- 中心按钮 ---- */
+.r-btn {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:90px; height:90px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #E8D596, #BF9530, #8B6914);
+    color:var(--ink); border:3px solid #6B5B3A;
+    font-size:22px; font-weight:900; cursor:pointer; z-index:5;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:
+        0 0 0 3px rgba(107,91,58,0.3),
+        0 4px 16px rgba(0,0,0,0.2);
+    transition:transform 0.15s; letter-spacing:2px;
+    font-family:'STKaiti','KaiTi',serif;
+}
+.r-btn:hover { transform:translate(-50%,-50%) scale(1.05); }
+.r-btn:active { transform:translate(-50%,-50%) scale(0.93); }
+.r-btn:disabled { cursor:not-allowed; opacity:0.7; }
+
+.r-hint { margin-top:28px; color:var(--brown-l); font-size:22px; letter-spacing:2px; }
+
+/* ================================================================
+   饕餮美食卡
+   ================================================================ */
+.feast-overlay {
+    position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.5);
+    display:flex; align-items:center; justify-content:center;
+    animation:fadeIn 0.2s ease-out;
+}
+.feast-card {
+    background:linear-gradient(175deg, #FFFDF4 0%, #F5EFE0 100%);
+    border-radius:14px; padding:0; margin:16px; max-width:420px; width:100%;
+    border:1px solid rgba(196,162,75,0.2);
+    box-shadow:
+        0 0 0 3px #8B7538,
+        0 0 0 7px #6B5B3A,
+        0 0 0 9px rgba(196,162,75,0.2),
+        0 12px 40px rgba(0,0,0,0.25);
+    overflow:hidden;
+    animation:feastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes feastIn {
+    from { transform:scale(0.9) translateY(20px); opacity:0; }
+    to   { transform:scale(1) translateY(0); opacity:1; }
+}
+/* 回纹顶边 */
+.feast-top {
+    height:6px;
+    background:repeating-linear-gradient(90deg,
+        var(--gold) 0px, var(--gold) 10px, transparent 10px, transparent 14px,
+        var(--gold-d) 14px, var(--gold-d) 18px, transparent 18px, transparent 22px);
+}
+/* 图片区 */
+.feast-img-wrap {
+    padding:28px 28px 0; text-align:center;
+}
+.feast-img-wrap img {
+    max-width:180px; max-height:160px; border-radius:10px;
+    box-shadow:0 4px 16px rgba(35,24,18,0.12);
+    object-fit:cover;
+}
+/* 文本区 */
+.feast-body { padding:20px 28px 28px; text-align:center; }
+.feast-body h2 {
+    font-size:32px; font-family:'STKaiti','KaiTi',serif;
+    color:#1A110B; letter-spacing:4px; margin-bottom:10px;
+}
+.feast-body .feast-desc {
+    font-size:16px; color:var(--brown); line-height:1.8;
+    letter-spacing:1px; font-family:'STKaiti','KaiTi',serif;
+}
+.feast-body .btn { margin-top:16px; width:auto; padding:10px 36px; }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html" class="on"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav"><a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a></nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">吃货大转盘</span></div>
+<div class="r-wrap">
+    <div class="r-stage" id="rStage">
+        <div class="r-ptr"></div>
+        <div class="r-wheel" id="rw"></div>
+        <button class="r-btn" id="rBtn" onclick="spinRoulette()">抽</button>
+    </div>
+    <p class="r-hint">转一转，今晚吃啥让长安老味道决定！</p>
+</div>
+<img src="img/deco-3.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/deco-4.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+// ================================================================
+// 食物数据（img/food/ 目录下对应的图片文件名）
+// ================================================================
+var foods = [
+    { name:'老潼关肉夹馍', img:'img/food/老潼关肉夹馍.jpg', desc:'战国遗风，腊汁肉醇香酥烂，白吉馍皮脆里嫩。一口咬下，千年长安的烟火气扑面而来，堪称三秦第一吃。' },
+    { name:'岐山擀面皮',   img:'img/food/岐山擀面皮.jpg',   desc:'源于西岐故地，面皮筋道爽滑，油泼辣子香气扑鼻。酸辣开胃，夏日里一碗下肚，暑气全消。' },
+    { name:'水盆羊肉',     img:'img/food/水盆羊肉.jpg',     desc:'汤清肉烂，鲜而不膻。配月牙饼同食，长安人冬日里的心头好，暖身又暖心。' },
+    { name:'甑糕',         img:'img/food/甑糕.jpg',         desc:'糯米红枣层层叠蒸，甜糯绵密。关中传统甜品，一口甜蜜穿越回盛唐街头。' },
+    { name:'油泼面',       img:'img/food/油泼面.jpg',       desc:'滚油浇下滋啦作响，蒜香辣香瞬间迸发。宽面劲道，关中人的豪爽全在这一碗里。' },
+    { name:'biangbiang面', img:'img/food/biangbiang面.jpg',  desc:'笔画最多的汉字，最宽的面条。裤带面拌上臊子辣子，老陕的实在与幽默尽在其中。' },
+    { name:'肉丸胡辣汤',   img:'img/food/肉丸胡辣汤.jpg',   desc:'牛肉丸弹牙，汤底浓稠麻辣。大清早一碗配坨坨馍，西安人的元气开关。' },
+    { name:'烤面筋',       img:'img/food/烤面筋.jpg',       desc:'夜市王者，炭火慢烤至外焦里嫩。孜然辣椒裹满，一串接一串停不下来。' },
+    { name:'荞面饸饹',     img:'img/food/荞面饸饹.jpg',     desc:'陕北风味，荞面压成细条。浇上羊肉臊子，质朴醇厚，黄土高原的粗犷尽在碗中。' },
+    { name:'腊汁肉夹馍',   img:'img/food/腊汁肉夹馍.jpg',   desc:'不同于潼关版，白吉馍夹纯瘦腊汁肉。汁水浸润饼皮，每一口都是满足。' },
+    { name:'酸汤饺子',     img:'img/food/酸汤饺子.jpg',     desc:'酸辣汤底配薄皮大馅饺子，开胃又解腻。长安人无论冬夏都好这一口。' },
+    { name:'秦镇米皮',     img:'img/food/秦镇米皮.jpg',     desc:'户县秦镇特产，米浆蒸制薄如纸。切条浇上秘制辣油，爽滑筋道，终南山下的清凉美味。' }
+];
+
+// ================================================================
+// 动态渲染转盘（保留核心角度计算逻辑）
+// ================================================================
+(function(){
+    var N = foods.length;
+    var seg = 360 / N;
+    var wheel = document.getElementById('rw');
+
+    // 扇区颜色交替
+    var cols = [];
+    for(var i=0; i<N; i++){
+        cols.push(i%2===0 ? '#FFF8EE' : '#D4A84B');
+    }
+    var grad = [];
+    for(var i=0; i<N; i++){
+        grad.push(cols[i] + ' ' + (i*seg) + 'deg ' + ((i+1)*seg) + 'deg');
+    }
+    wheel.style.background = 'conic-gradient(' + grad.join(',') + ')';
+
+    // 动态写入食物名称
+    var html = '';
+    for(var i=0; i<N; i++){
+        var angleMid = i*seg + seg/2 - 90;
+        var rad = angleMid * Math.PI / 180;
+        var r = 180;
+        var x = 255 + r * Math.cos(rad);
+        var y = 255 + r * Math.sin(rad);
+        html += '<span style="position:absolute;left:'+x+'px;top:'+y+'px;transform:translate(-50%,-50%) rotate('+angleMid+'deg);font-size:16px;font-weight:700;color:var(--ink);pointer-events:none;text-align:center;white-space:nowrap;">'+foods[i].name+'</span>';
+    }
+    wheel.innerHTML += html;
+    wheel.dataset.deg = 0;
+
+    // ================================================================
+    // 旋转逻辑（保留核心 td%360 计算）
+    // ================================================================
+    window.spinRoulette = function(){
+        if(wheel.dataset.spin === '1') return;
+        wheel.dataset.spin = '1';
+        var btn = document.getElementById('rBtn');
+        btn.disabled = true;
+        btn.textContent = '咥...';var tickTimer=setInterval(function(){SFX.tick();},240);var tickStop=setTimeout(function(){clearInterval(tickTimer);},3800);
+
+        var spins = 5 + Math.floor(Math.random() * 5);
+        var extra = Math.random() * 360;
+        var td = Number(wheel.dataset.deg) + spins * 360 + extra;
+        wheel.style.transform = 'rotate(' + td + 'deg)';
+        wheel.dataset.deg = td;
+
+        setTimeout(function(){
+            wheel.dataset.spin = '0';
+            btn.disabled = false;
+            btn.textContent = '抽';
+
+            // 核心：td%360 计算落点
+            var finalDeg = td % 360;
+            var idx = Math.floor((360 - finalDeg) / seg) % N;
+            saveHistory("roulette",{food:foods[idx].name});showFeastCard(foods[idx]);
+        }, 4200);
+    };
+})();
+
+// ================================================================
+// 饕餮美食卡（替代原 showModal）
+// ================================================================
+function showFeastCard(food){
+    var old = document.querySelector('.feast-overlay');
+    if(old) old.remove();
+
+    var ov = document.createElement('div');
+    ov.className = 'feast-overlay';
+
+    ov.innerHTML =
+        '<div class="feast-card">' +
+            '<div class="feast-top"></div>' +
+            '<div class="feast-img-wrap"><img src="'+food.img+'" alt="'+food.name+'" onerror="this.style.display=\'none\'"></div>' +
+            '<div class="feast-body">' +
+                '<h2>'+food.name+'</h2>' +
+                '<p class="feast-desc">'+food.desc+'</p>' +
+                '<button class="btn btn-red" id="feastBtn">再来一转</button>' +
+            '</div>' +
+        '</div>';
+
+    document.body.appendChild(ov);
+
+    var close = function(){ ov.remove(); };
+    ov.querySelector('#feastBtn').onclick = close;
+    ov.addEventListener('click', function(e){
+        if(e.target === ov) close();
+    });
+}
+
+// ================================================================
+// 导航
+// ================================================================
+function fadeTo(u){
+    document.body.style.opacity='0';
+    document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';
+    setTimeout(function(){ window.location.href=u; },150);
+}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+    a.addEventListener('click',function(e){ e.preventDefault(); fadeTo(this.getAttribute('href')); });
+});
+</script>
+</body>
+</html>

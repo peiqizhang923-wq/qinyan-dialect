@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长安行迹 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.h-page { max-width:800px; margin:0 auto; padding:32px 24px 48px; }
+.h-card {
+    background:linear-gradient(175deg, #FFFDF6 0%, #F9F3E6 100%);
+    border-radius:14px; padding:32px 30px 28px; margin-bottom:24px;
+    border:1px solid rgba(191,149,48,0.1);
+    box-shadow:0 2px 12px rgba(35,24,18,0.04);
+    position:relative; overflow:hidden;
+}
+.h-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:repeating-linear-gradient(90deg,var(--gold),var(--gold) 10px,transparent 10px,transparent 15px,var(--gold-d) 15px,var(--gold-d) 20px,transparent 20px,transparent 25px);
+    opacity:0.5; z-index:2;
+}
+.h-card h3 { font-size:24px; color:var(--red-d); margin-bottom:6px; font-family:'STKaiti','KaiTi',serif; letter-spacing:2px; }
+.stat-mini { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:16px 0; }
+.stat-mini .sm { text-align:center; padding:16px 8px; background:var(--white); border-radius:10px; border:1px solid rgba(191,149,48,0.06); }
+.sm .num { font-size:32px; font-weight:900; color:var(--red); font-family:'STKaiti','KaiTi',serif; }
+.sm .label { font-size:12px; color:var(--brown-l); margin-top:3px; }
+
+/* 时间线 */
+.timeline { position:relative; padding-left:28px; }
+.timeline::before {
+    content:''; position:absolute; left:8px; top:0; bottom:0; width:1px;
+    background:linear-gradient(180deg, var(--gold), rgba(191,149,48,0.1));
+}
+.tl-item { position:relative; margin-bottom:18px; padding:14px 18px; background:var(--white); border-radius:10px; border:1px solid rgba(191,149,48,0.06); }
+.tl-item::before {
+    content:''; position:absolute; left:-24px; top:18px; width:9px; height:9px; border-radius:50%;
+    background:var(--gold); border:2px solid var(--white); box-shadow:0 0 0 2px rgba(191,149,48,0.2);
+}
+.tl-item .tl-type {
+    font-size:12px; color:var(--gold-d); letter-spacing:2px; margin-bottom:4px; font-weight:700;
+}
+.tl-item .tl-body { font-size:18px; color:var(--ink); line-height:1.6; font-family:'STKaiti','KaiTi',serif; }
+.tl-item .tl-time { font-size:12px; color:var(--brown-l); margin-top:4px; }
+
+.tl-type-icon { margin-right:4px; }
+.tl-empty { text-align:center; padding:40px; color:var(--brown-l); font-size:18px; font-family:'STKaiti','KaiTi',serif; letter-spacing:2px; }
+
+.btn-row { display:flex; gap:10px; margin-top:12px; }
+.btn-row .btn { width:auto; font-size:18px; }
+
+@media(max-width:700px){ .stat-mini{grid-template-columns:repeat(2,1fr);} }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav">
+        <a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html" class="on"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a>
+    </nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">长安行迹</span></div>
+<div class="h-page">
+
+<div class="h-card">
+    <h3>📜 你的长安行迹</h3>
+    <div class="stat-mini" id="statMini">
+        <div class="sm"><div class="num" id="sTranslate">0</div><div class="label">方言转译</div></div>
+        <div class="sm"><div class="num" id="sClassical">0</div><div class="label">古雅言</div></div>
+        <div class="sm"><div class="num" id="sDict">0</div><div class="label">字词解码</div></div>
+        <div class="sm"><div class="num" id="sFun">0</div><div class="label">趣味互动</div></div>
+    </div>
+</div>
+
+<div class="h-card">
+    <h3>📜 行迹时间线</h3>
+    <div class="timeline" id="timeline"><div class="tl-empty">游览长安各处，行迹将在此铺展……</div></div>
+    <div class="btn-row">
+        <button class="btn btn-red btn-sm" onclick="renderAll()">🔄 刷新</button>
+        <button class="btn btn-gold btn-sm" onclick="if(confirm('确定清空所有行迹？')){localStorage.removeItem('qy_history');renderAll();}">🗑️ 清空</button>
+    </div>
+</div>
+
+</div>
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+var TYPE_MAP = {
+    translate: { icon:'🗣️', label:'乡音翻译' },
+    classical: { icon:'🏮', label:'大唐雅言' },
+    dict:      { icon:'📖', label:'字词解码' },
+    fortune:   { icon:'🎋', label:'祈福求签' },
+    quiz:      { icon:'📝', label:'方言考试' },
+    roulette:  { icon:'🎰', label:'转盘抽选' }
+};
+
+function formatTime(ts){
+    var d = new Date(ts);
+    var pad = function(n){ return n<10?'0'+n:''+n; };
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+function renderAll(){
+    var history = getHistory();
+
+    // 统计
+    var counts = { translate:0, classical:0, dict:0, fun:0 };
+    for(var i=0; i<history.length; i++){
+        var t = history[i].type;
+        if(t==='translate'||t==='classical'||t==='dict') counts[t]++;
+        else counts.fun++;
+    }
+    document.getElementById('sTranslate').textContent = counts.translate;
+    document.getElementById('sClassical').textContent = counts.classical;
+    document.getElementById('sDict').textContent = counts.dict;
+    document.getElementById('sFun').textContent = counts.fun;
+
+    // 时间线
+    var html = '';
+    if(history.length === 0){
+        html = '<div class="tl-empty">游览长安各处，行迹将在此铺展……</div>';
+    }
+    for(var i=0; i<history.length; i++){
+        var h = history[i];
+        var tm = TYPE_MAP[h.type] || { icon:'📍', label:h.type };
+        var bodyHtml = '';
+        if(h.type === 'translate'){ bodyHtml = '「'+h.data.original+'」→ <strong>'+h.data.result+'</strong>'; }
+        else if(h.type === 'classical'){ bodyHtml = '「'+h.data.original+'」→ <strong>'+h.data.result+'</strong>'; }
+        else if(h.type === 'dict'){ bodyHtml = '查阅「<strong>'+h.data.word+'</strong>」'; }
+        else if(h.type === 'fortune'){ bodyHtml = '求得 <strong>'+h.data.lv+'</strong>：'+h.data.txt; }
+        else if(h.type === 'quiz'){ bodyHtml = '考试成绩：<strong>'+h.data.score+'/'+h.data.total+'</strong> — '+h.data.grade; }
+        else if(h.type === 'roulette'){ bodyHtml = '转盘抽中：<strong>'+h.data.food+'</strong>'; }
+        else{ bodyHtml = JSON.stringify(h.data); }
+
+        html += '<div class="tl-item"><div class="tl-type">'+tm.icon+' '+tm.label+'</div><div class="tl-body">'+bodyHtml+'</div><div class="tl-time">'+formatTime(h.time)+'</div></div>';
+    }
+    document.getElementById('timeline').innerHTML = html;
+}
+
+renderAll();
+
+function fadeTo(u){
+    document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';
+    setTimeout(function(){window.location.href=u;},150);
+}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});
+});
+</script>
+</body>
+</html>

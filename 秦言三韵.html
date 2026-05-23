@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦言三韵 · 掌上长安数字文旅驿站</title>
+<style>
+/* ================================================================
+   全局变量
+   ================================================================ */
+:root {
+    --cream: #FFF8EE;
+    --red: #C23A2B;
+    --red-dark: #8B1A1A;
+    --gold: #D4A84B;
+    --gold-light: #F0D68A;
+    --ink: #2C1810;
+    --ink-light: #5C3E2E;
+    --jade: #5B8C5A;
+    --white: #fff;
+    --bg: #e8e4df;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: 'PingFang SC','Microsoft YaHei','Noto Serif SC','STKaiti','SimSun',sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+}
+
+#app-container {
+    width: 100%; min-height: 100vh;
+    background: var(--cream);
+    color: var(--ink);
+    padding-bottom: 64px;
+}
+
+/* ---- TOP BAR ---- */
+.top-bar {
+    display: flex; align-items: center;
+    height: 48px; padding: 0 24px;
+    background: var(--white);
+    border-bottom: 1px solid rgba(212,168,75,0.2);
+    position: sticky; top: 0; z-index: 50;
+}
+.top-bar a.back-btn {
+    text-decoration: none; font-size: 18px; cursor: pointer;
+    color: var(--ink); width: 40px; line-height: 48px; font-family: inherit;
+}
+.top-bar .title {
+    flex: 1; text-align: center;
+    font-size: 17px; font-weight: 700; color: var(--red-dark);
+    letter-spacing: 2px;
+}
+
+/* ---- HERO ---- */
+.hero {
+    height: 220px;
+    background: linear-gradient(160deg, var(--red-dark) 0%, var(--red) 40%, #A02820 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+}
+.hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(212,168,75,0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px);
+    pointer-events: none;
+}
+.hero h1 {
+    font-size: 44px; color: var(--gold); letter-spacing: 10px;
+    text-shadow: 3px 3px 12px rgba(0,0,0,0.4);
+    font-family: 'STKaiti','KaiTi','Noto Serif SC',serif;
+}
+.hero .sub {
+    font-size: 14px; color: rgba(255,255,255,0.65);
+    letter-spacing: 4px; margin-top: 6px;
+}
+
+/* ---- HOME GRID ---- */
+.home-content {
+    max-width: 960px; margin: 0 auto; padding: 0 32px;
+}
+.grid-section {
+    background: var(--white); border-radius: 16px;
+    margin-top: -20px; position: relative; z-index: 2;
+    padding: 28px 32px 24px;
+    box-shadow: 0 8px 32px rgba(44,24,16,0.06);
+}
+.grid-section + .grid-section {
+    margin-top: 20px; border-radius: 16px; /* 第二个section恢复正常间距 */
+}
+.grid-label {
+    font-size: 13px; color: var(--ink-light);
+    letter-spacing: 3px; margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(212,168,75,0.15);
+    display: flex; align-items: center; gap: 8px;
+}
+.grid-label::after {
+    content: ''; flex: 1; height: 1px; background: rgba(212,168,75,0.1);
+}
+.grid-6 {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+}
+.grid-card {
+    background: var(--white); border-radius: 14px; padding: 24px 12px 18px;
+    text-align: center; cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid rgba(212,168,75,0.08);
+    box-shadow: 0 2px 8px rgba(44,24,16,0.03);
+    user-select: none;
+}
+.grid-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(44,24,16,0.08);
+    border-color: rgba(212,168,75,0.3);
+}
+.grid-card .gc-icon { font-size: 30px; margin-bottom: 8px; display: block; }
+.grid-card .gc-label { font-size: 13px; color: var(--ink); font-weight: 600; }
+.grid-card.ai  { border-top: 3px solid var(--red); }
+.grid-card.fun { border-top: 3px solid var(--gold); }
+
+.settings-link {
+    display: block; text-align: center; margin-top: 24px;
+    color: var(--ink-light); font-size: 13px; cursor: pointer;
+    text-decoration: none; opacity: 0.6; transition: opacity 0.2s;
+}
+.settings-link:hover { opacity: 1; }
+
+/* ---- SUB PAGES ---- */
+.page-content {
+    max-width: 680px; margin: 0 auto; padding: 32px 24px 40px;
+}
+
+/* ---- CARD ---- */
+.card {
+    background: var(--white); border-radius: 14px;
+    padding: 24px 28px; margin-bottom: 20px;
+    box-shadow: 0 2px 16px rgba(44,24,16,0.05);
+    border: 1px solid rgba(212,168,75,0.08);
+}
+.card-cream {
+    background: linear-gradient(170deg, #FFFDF5 0%, #FFF8EE 100%);
+    border: 1px solid rgba(212,168,75,0.2);
+}
+
+/* ---- FORM ---- */
+textarea, input[type="text"], select.input-field {
+    width: 100%; padding: 14px 16px; border-radius: 10px;
+    font-size: 15px; font-family: inherit; outline: none;
+    border: 1.5px solid rgba(212,168,75,0.15);
+    background: var(--cream); color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea:focus, input[type="text"]:focus, select.input-field:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,75,0.1);
+}
+textarea { height: 100px; resize: vertical; }
+select.input-field {
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B4513' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+}
+.form-row { margin-top: 12px; }
+
+/* ---- BUTTONS ---- */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 13px 24px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: scale(0.98); }
+.btn-red {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff; box-shadow: 0 4px 14px rgba(194,58,43,0.2);
+}
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold) 0%, #C49A3E 100%);
+    color: var(--ink); box-shadow: 0 4px 14px rgba(212,168,75,0.2);
+}
+.btn-jade {
+    background: linear-gradient(135deg, var(--jade) 0%, #3D6B3D 100%);
+    color: #fff; box-shadow: 0 4px 14px rgba(91,140,90,0.2);
+}
+.btn-sm {
+    width: auto; padding: 8px 18px; font-size: 13px; letter-spacing: 0;
+}
+.btn-jade.playing {
+    animation: btn-pulse 1s infinite;
+    background: linear-gradient(135deg, #E8C84A, #D4A84B); color: var(--ink);
+}
+@keyframes btn-pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+/* ---- RESULT ---- */
+.result-box {
+    padding: 20px 24px; border-radius: 12px;
+    background: var(--cream); border: 1px solid rgba(212,168,75,0.12);
+    display: none; margin-top: 16px;
+}
+.result-box.show { display: block; }
+.result-box .rl { font-weight: 600; color: var(--red); }
+.result-box.classical .result-text {
+    font-family: 'STKaiti','KaiTi','Noto Serif SC',serif;
+    font-size: 20px; text-align: center; letter-spacing: 3px; line-height: 2;
+}
+
+/* ---- DICT ---- */
+.dict-entry { display: flex; gap: 10px; margin-bottom: 8px; align-items: baseline; }
+.dict-entry .dk {
+    font-size: 12px; color: var(--red); font-weight: 700;
+    white-space: nowrap; min-width: 42px;
+}
+.dict-entry .dv { font-size: 14px; color: var(--ink); }
+
+/* ---- ROULETTE ---- */
+.roulette-wrap {
+    display: flex; flex-direction: column; align-items: center; padding: 30px 20px;
+}
+.roulette-stage { position: relative; display: inline-block; }
+.roulette-pointer {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; z-index: 5;
+    border-left: 16px solid transparent; border-right: 16px solid transparent;
+    border-top: 28px solid var(--red-dark);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.roulette-wheel {
+    width: 300px; height: 300px; border-radius: 50%; position: relative;
+    transition: transform 4s cubic-bezier(0.17,0.67,0.12,0.99);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.12);
+}
+.roulette-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--red); color: #fff; border: 3px solid var(--gold);
+    font-size: 20px; font-weight: 900; cursor: pointer; z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(194,58,43,0.35);
+    transition: transform 0.15s;
+}
+.roulette-btn:active { transform: translate(-50%,-50%) scale(0.92); }
+.roulette-hint {
+    margin-top: 20px; color: var(--ink-light); font-size: 13px;
+}
+
+/* ---- FORTUNE ---- */
+.fortune-scene { text-align: center; padding: 40px 20px 30px; }
+.fortune-tube {
+    width: 72px; height: 150px; margin: 0 auto 24px;
+    background: linear-gradient(180deg, #D4A84B 0%, #B8922E 25%, #8B6914 55%, #C49A3E 100%);
+    border-radius: 10px 10px 18px 18px; position: relative;
+    box-shadow: 0 8px 24px rgba(139,26,26,0.15);
+}
+.fortune-tube::after {
+    content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    width: 44px; height: 4px; background: var(--red-dark); border-radius: 2px;
+}
+.fortune-tube.shaking { animation: tube-shake 0.12s infinite; }
+@keyframes tube-shake {
+    0%,100%{transform:rotate(0deg)}
+    25%{transform:rotate(-10deg)}
+    75%{transform:rotate(10deg)}
+}
+
+/* ---- QUIZ ---- */
+.quiz-q { font-weight: 700; font-size: 16px; margin-bottom: 16px; color: var(--ink); }
+.quiz-opt {
+    display: block; width: 100%; padding: 14px 18px; margin: 8px 0;
+    border: 1.5px solid rgba(212,168,75,0.15); border-radius: 10px;
+    background: var(--white); font-size: 15px; font-family: inherit;
+    cursor: pointer; text-align: left; transition: all 0.2s;
+}
+.quiz-opt:hover { border-color: var(--gold); background: #FFFDF5; }
+.quiz-opt:active { transform: scale(0.98); }
+.quiz-opt.right { border-color: var(--jade); background: #E8F5E9; color: #2E5A2E; }
+.quiz-opt.wrong { border-color: var(--red); background: #FFEBEE; color: var(--red-dark); }
+.quiz-progress {
+    font-size: 13px; color: var(--ink-light); margin-bottom: 6px;
+}
+
+/* ---- MODAL ---- */
+.modal {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal-box {
+    background: #FFFDF5; border-radius: 16px; padding: 32px 28px;
+    margin: 24px; max-width: 340px; width: 100%; text-align: center;
+    border: 2px solid var(--gold); box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    animation: popIn 0.25s;
+}
+@keyframes popIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-box h3 { color: var(--red-dark); font-size: 20px; margin-bottom: 12px; }
+.modal-box p  { color: var(--ink); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.modal-box .btn { width: auto; padding: 10px 36px; }
+
+/* ---- BOTTOM TAB ---- */
+.bottom-tab-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+    display: flex; justify-content: center; gap: 48px;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(212,168,75,0.15);
+    padding: 10px 0 env(safe-area-inset-bottom,10px);
+}
+.tab-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 20px; border: none; background: none;
+    font-size: 14px; font-family: inherit; cursor: pointer;
+    color: var(--ink-light); font-weight: 500;
+    transition: color 0.2s; border-radius: 8px;
+}
+.tab-btn.active {
+    color: var(--red); font-weight: 700;
+    background: rgba(194,58,43,0.06);
+}
+.tab-btn .tb-icon { font-size: 16px; }
+
+/* ---- LOADING ---- */
+.loading { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-light); }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(212,168,75,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 800px) {
+    .grid-6 { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .home-content { padding: 0 16px; }
+    .grid-section { padding: 20px 16px 18px; }
+    .hero { height: 180px; }
+    .hero h1 { font-size: 32px; letter-spacing: 6px; }
+    .page-content { padding: 20px 14px 32px; }
+}
+@media (max-width: 480px) {
+    .grid-6 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .grid-card { padding: 18px 8px 14px; }
+    .grid-card .gc-icon { font-size: 24px; }
+    .bottom-tab-bar { gap: 16px; }
+    .tab-btn { padding: 6px 12px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app-container">
+
+<!-- ================================================================
+     HOME
+     ================================================================ -->
+<div class="page active" id="page-home">
+    <div class="hero">
+        <h1>秦言三韵</h1>
+        <div class="sub">你的随身长安数字驿站</div>
+    </div>
+
+    <div class="home-content">
+        <div class="grid-section">
+            <div class="grid-label">🤖 赛博老陕 · AI 专区</div>
+            <div class="grid-6">
+                <div class="grid-card ai" onclick="navTo('translate')">
+                    <span class="gc-icon">🗣️</span><span class="gc-label">乡音翻译机</span>
+                </div>
+                <div class="grid-card ai" onclick="navTo('classical')">
+                    <span class="gc-icon">🏮</span><span class="gc-label">大唐雅言</span>
+                </div>
+                <div class="grid-card ai" onclick="navTo('dict')">
+                    <span class="gc-icon">📖</span><span class="gc-label">秦字解码</span>
+                </div>
+                <div class="grid-card fun" onclick="navTo('quiz')">
+                    <span class="gc-icon">📝</span><span class="gc-label">方言八级考</span>
+                </div>
+                <div class="grid-card fun" onclick="navTo('fortune')">
+                    <span class="gc-icon">🎋</span><span class="gc-label">长安祈福签</span>
+                </div>
+                <div class="grid-card fun" onclick="navTo('roulette')">
+                    <span class="gc-icon">🎰</span><span class="gc-label">吃货大转盘</span>
+                </div>
+            </div>
+        </div>
+        <a class="settings-link" onclick="navTo('settings')">⚙️ API 配置</a>
+    </div>
+</div>
+
+<!-- ================================================================
+     TRANSLATE
+     ================================================================ -->
+<div class="page" id="page-translate">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">乡音翻译机</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="page-content">
+        <div class="card card-cream">
+            <textarea id="input1" placeholder="请输入普通话短句，如：今天天气真好"></textarea>
+            <div class="form-row">
+                <select class="input-field" id="dialectSelect">
+                    <option value="关中">🗣️ 关中 · 西安语调</option>
+                    <option value="陕北">🗣️ 陕北 · 黄土语调</option>
+                    <option value="陕南">🗣️ 陕南 · 温婉语调</option>
+                </select>
+            </div>
+            <div class="form-row"><button class="btn btn-red" id="btnTranslate" onclick="translateDialect()">✨ 一键转译</button></div>
+        </div>
+        <div class="result-box" id="result1">
+            <div><span class="rl">🗣️ 方言转译结果：</span><span id="resultText1"></span></div>
+            <div class="form-row"><button class="btn btn-jade" id="voiceBtn1" onclick="playVoice('resultText1','voiceBtn1','guanzhong')">🔊 播放方言语音</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     CLASSICAL
+     ================================================================ -->
+<div class="page" id="page-classical">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">大唐雅言</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="page-content">
+        <div class="card card-cream">
+            <textarea id="input3" placeholder="输入现代文旅文案，如：西安大雁塔"></textarea>
+            <div class="form-row"><button class="btn btn-red" id="btnClassical" onclick="toClassical()">🏮 转为古雅言</button></div>
+        </div>
+        <div class="result-box classical" id="result3">
+            <div class="result-text"><span id="resultText3"></span></div>
+            <div class="form-row"><button class="btn btn-jade" id="voiceBtn3" onclick="playVoice('resultText3','voiceBtn3','classical')">🔊 播放古雅言语音</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     DICT
+     ================================================================ -->
+<div class="page" id="page-dict">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">秦字解码局</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="page-content">
+        <div class="card card-cream">
+            <div style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:10px;padding:0 14px;border:1.5px solid rgba(212,168,75,0.15);">
+                <span style="font-size:18px;">🔍</span>
+                <input type="text" id="input2" placeholder="输入方言词汇或生僻字，如：咥、嫽、biang" style="border:none;background:transparent;flex:1;">
+            </div>
+            <div class="form-row"><button class="btn btn-red" id="btnDict" onclick="analyzeWord()">📖 解码溯源</button></div>
+        </div>
+        <div class="result-box" id="result2">
+            <div id="resultText2"></div>
+            <div class="form-row"><button class="btn btn-jade" id="voiceBtn2" onclick="playVoice('resultText2','voiceBtn2','normal')">🔊 播放词汇发音</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     ROULETTE
+     ================================================================ -->
+<div class="page" id="page-roulette">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">吃货大转盘</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="roulette-wrap">
+        <div class="roulette-stage">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel"></div>
+            <div class="roulette-btn" onclick="spinRoulette()">抽</div>
+        </div>
+        <div class="roulette-hint">今天吃什么？让长安美食为你决定！</div>
+    </div>
+</div>
+
+<!-- ================================================================
+     FORTUNE
+     ================================================================ -->
+<div class="page" id="page-fortune">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">长安祈福签</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="fortune-scene">
+        <div class="fortune-tube" id="fortuneTube"></div>
+        <p style="color:var(--ink-light);margin-bottom:18px;">心诚则灵，摇一支长安签</p>
+        <button class="btn btn-red btn-sm" id="btnFortune" onclick="drawFortune()" style="width:200px;">🎋 摇一摇求签</button>
+    </div>
+</div>
+
+<!-- ================================================================
+     QUIZ
+     ================================================================ -->
+<div class="page" id="page-quiz">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">方言八级考</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="page-content" id="quizArea"></div>
+</div>
+
+<!-- ================================================================
+     SETTINGS
+     ================================================================ -->
+<div class="page" id="page-settings">
+    <div class="top-bar">
+        <a class="back-btn" onclick="navTo('home')">‹ 返回</a>
+        <span class="title">API 配置</span>
+        <span style="width:40px"></span>
+    </div>
+    <div class="page-content">
+        <div class="card">
+            <p style="margin-bottom:10px;font-weight:600;">🔹 文字引擎：<span id="currentProviderLabel" style="color:var(--red);">火山引擎·豆包</span></p>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+                <button class="btn btn-gold btn-sm" onclick="switchProvider('volc')">🔥 火山引擎</button>
+                <button class="btn btn-gold btn-sm" onclick="switchProvider('deepseek')">🧠 DeepSeek</button>
+            </div>
+
+            <p style="margin-bottom:10px;font-weight:600;">🔹 语音引擎：<span id="voiceEngineLabel" style="color:#0078D4;">Edge-TTS 陕西语音</span></p>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+                <button class="btn btn-gold btn-sm" onclick="switchVoiceEngine('edgetts')">🎧 Edge-TTS</button>
+                <button class="btn btn-gold btn-sm" onclick="switchVoiceEngine('xunfei')">🎙️ 讯飞</button>
+                <button class="btn btn-gold btn-sm" onclick="switchVoiceEngine('webspeech')">🗣️ Web</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-size:13px;white-space:nowrap;">Edge-TTS 地址：</span>
+                <input type="text" id="etApiUrl" value="http://localhost:9880" style="flex:1;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;" onchange="EDGE_TTS.apiUrl=this.value.trim();localStorage.setItem('edgettsApiUrl',EDGE_TTS.apiUrl);">
+                <button class="btn btn-gold btn-sm" onclick="checkEdgeTTSStatus()">检测</button>
+            </div>
+            <span id="etStatus" style="font-size:12px;color:var(--ink-light);"></span>
+
+            <p style="margin-top:14px;font-size:12px;color:var(--ink-light);">调用状态：<span id="apiStatus">就绪</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     TAB BAR
+     ================================================================ -->
+<nav class="bottom-tab-bar" id="bottomTabBar">
+    <button class="tab-btn active" onclick="switchTab('ai')" id="tab-ai">
+        <span class="tb-icon">🤖</span>赛博老陕
+    </button>
+    <button class="tab-btn" onclick="switchTab('fun')" id="tab-fun">
+        <span class="tb-icon">🎪</span>游园市井
+    </button>
+</nav>
+
+</div><!-- /app-container -->
+
+<script>
+// ================================================================
+// ★ HMAC-SHA256
+// ================================================================
+var XF_HMAC = (function(){
+    var K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    function ROTR(n,x){return (x>>>n)|(x<<(32-n));}
+    function SHR(n,x){return x>>>n;}
+    function Ch(x,y,z){return (x&y)^(~x&z);}
+    function Maj(x,y,z){return (x&y)^(x&z)^(y&z);}
+    function Sigma0(x){return ROTR(2,x)^ROTR(13,x)^ROTR(22,x);}
+    function Sigma1(x){return ROTR(6,x)^ROTR(11,x)^ROTR(25,x);}
+    function sigma0(x){return ROTR(7,x)^ROTR(18,x)^SHR(3,x);}
+    function sigma1(x){return ROTR(17,x)^ROTR(19,x)^SHR(10,x);}
+    function toBytes(str){var b=[];for(var i=0;i<str.length;i++){var c=str.charCodeAt(i);if(c<128)b.push(c);else if(c<2048){b.push(192|(c>>6));b.push(128|(c&63));}else if(c<55296||c>=57344){b.push(224|(c>>12));b.push(128|((c>>6)&63));b.push(128|(c&63));}else{i++;c=((c&1023)<<10)|(str.charCodeAt(i)&1023);b.push(240|(c>>18));b.push(128|((c>>12)&63));b.push(128|((c>>6)&63));b.push(128|(c&63));}}return b;}
+    function sha256(msg){var H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];var M=[];var bytes=typeof msg==='string'?toBytes(msg):msg;var bitLen=bytes.length*8;bytes.push(0x80);while((bytes.length*8+64)%512!==0)bytes.push(0);for(var i=0;i<8;i++)bytes.push((bitLen>>>((7-i)*8))&0xff);for(var i=0;i<bytes.length;i+=64){for(var t=0;t<16;t++)M[t]=((bytes[i+t*4]<<24)|(bytes[i+t*4+1]<<16)|(bytes[i+t*4+2]<<8)|bytes[i+t*4+3])>>>0;for(var t=16;t<64;t++)M[t]=(sigma1(M[t-2])+M[t-7]+sigma0(M[t-15])+M[t-16])>>>0;var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];for(var t=0;t<64;t++){var T1=(h+Sigma1(e)+Ch(e,f,g)+K[t]+M[t])>>>0;var T2=(Sigma0(a)+Maj(a,b,c))>>>0;h=g;g=f;f=e;e=(d+T1)>>>0;d=c;c=b;b=a;a=(T1+T2)>>>0;}H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0;}var r='';for(var i=0;i<8;i++)for(var j=0;j<4;j++)r+='0123456789abcdef'[(H[i]>>>((3-j)*8))>>4&15]+'0123456789abcdef'[H[i]>>>((3-j)*8)&15];return r;}
+    function hmac_sha256(key,msg){var kb=typeof key==='string'?toBytes(key):key;if(kb.length>64){var h=sha256(kb);kb=[];for(var i=0;i<h.length;i+=2)kb.push(parseInt(h.substr(i,2),16));}while(kb.length<64)kb.push(0);var op=[],ip=[];for(var i=0;i<64;i++){op.push(kb[i]^0x5c);ip.push(kb[i]^0x36);}var ih=sha256(ip.concat(typeof msg==='string'?toBytes(msg):msg));var ib=[];for(var i=0;i<ih.length;i+=2)ib.push(parseInt(ih.substr(i,2),16));return sha256(op.concat(ib));}
+    function toBase64(str){var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';var bytes=typeof str==='string'?toBytes(str):str;var r='';for(var i=0;i<bytes.length;i+=3){var b=((bytes[i]<<16)|(bytes[i+1]<<8)|bytes[i+2])>>>0;r+=chars[(b>>18)&63]+chars[(b>>12)&63]+chars[(b>>6)&63]+chars[b&63];}var pad=bytes.length%3;if(pad===1)r=r.substr(0,r.length-2)+'==';else if(pad===2)r=r.substr(0,r.length-1)+'=';return r;}
+    function hexToBytes(hex){var b=[];for(var i=0;i<hex.length;i+=2)b.push(parseInt(hex.substr(i,2),16));return b;}
+    return {hmac:function(k,m){return hmac_sha256(k,m);},hmacBase64:function(k,m){var h=hmac_sha256(k,m);return toBase64(hexToBytes(h));},sha256:function(m){return sha256(m);}};
+})();
+
+// ================================================================
+// ★ API
+// ================================================================
+const API_VOLC={name:'火山引擎·豆包',apiKey:'ark-a2a2e285-9fad-415f-a952-5ec6f64cc35b-012e0',model:'ep-20260521204922-j5x8l',url:'https://ark.cn-beijing.volces.com/api/v3/chat/completions'};
+const API_DEEPSEEK={name:'DeepSeek',apiKey:'YOUR_DEEPSEEK_API_KEY_HERE',model:'deepseek-chat',url:'https://api.deepseek.com/chat/completions'};
+let currentProvider='volc';
+function getCurrentAPIConfig(){return currentProvider==='deepseek'?API_DEEPSEEK:API_VOLC;}
+
+const EDGE_TTS={apiUrl:'http://localhost:9880'};
+const XUNFEI={appId:'d87c0d5f',apiKey:'NmI0NjVlNGQ5OTgyZjI4ZTdmMjlmZDA5',apiSecret:'48fef16809b45745573eba94dbf27a77',voices:{guanzhong:'aisxde',shanbei:'aisxds',shannan:'aisxdn',classical:'aisxde',normal:'aisxde'},get configured(){return !!(this.appId&&this.apiKey&&this.apiSecret);}};
+let voiceEngine='edgetts';
+
+// ================================================================
+// ★ NAV
+// ================================================================
+function navTo(page){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    var t=document.getElementById('page-'+page);
+    if(t)t.classList.add('active');
+    document.getElementById('bottomTabBar').style.display=(page==='home')?'flex':'none';
+    if(page==='quiz'&&typeof initQuiz==='function')initQuiz();
+    window.scrollTo(0,0);
+}
+function switchTab(tab){
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('tab-'+tab).classList.add('active');
+    navTo('home');
+}
+function switchProvider(p){currentProvider=p;document.getElementById('currentProviderLabel').textContent=p==='deepseek'?'DeepSeek':'火山引擎·豆包';}
+function switchVoiceEngine(e){
+    voiceEngine=e;var l=document.getElementById('voiceEngineLabel');
+    if(e==='edgetts'){l.textContent='Edge-TTS 陕西语音';l.style.color='#0078D4';}
+    else if(e==='xunfei'){l.textContent='讯飞方言语音';l.style.color='var(--red)';}
+    else{l.textContent='Web Speech';l.style.color='var(--jade)';}
+}
+function setApiStatus(msg,err){var el=document.getElementById('apiStatus');if(el){el.textContent=msg;el.style.color=err?'#CC3333':'var(--ink)';}}
+async function checkEdgeTTSStatus(){
+    var st=document.getElementById('etStatus');st.textContent='检测中...';
+    try{var r=await fetch(EDGE_TTS.apiUrl+'/health',{signal:AbortSignal.timeout(5000)});st.textContent=r.ok?'✅ 在线':'❌ 离线';st.style.color=r.ok?'var(--jade)':'#CC3333';}
+    catch(e){st.textContent='❌ 离线';st.style.color='#CC3333';}
+}
+
+// ================================================================
+// ★ AI
+// ================================================================
+async function callAI(sp,ui){
+    var cfg=getCurrentAPIConfig();setApiStatus('⏳ '+cfg.name+'...');
+    var resp=await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey},body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:sp},{role:'user',content:ui}],max_tokens:150,temperature:0.2})});
+    if(!resp.ok){var e='';try{var d=await resp.json();e=d.error?.message||JSON.stringify(d);}catch(ex){e='HTTP '+resp.status;}throw new Error(cfg.name+' 失败: '+e);}
+    var data=await resp.json();setApiStatus('✅ 调用成功');
+    return (data.choices?.[0]?.message?.content||'').trim();
+}
+
+const P_GUANZHONG='你扮演地道老西安本地人，只用纯正关中市井口语改写用户输入。使用西安方言字词——"吃"→"咥"、"聊天"→"谝闲传"、"很好"→"嫽咋咧"、"散步"→"溜达溜达"、"怎么了"→"咋咧"、"舒服"→"受活"。句式简短接地气。只输出方言文字，控制在50字内，使用标准汉字。';
+const P_SHANBEI='你扮演陕北黄土高原本地老乡，用豪迈质朴的陕北乡土口语改写内容。使用陕北方言——"敞亮""舒坦""走哇""咋咧""可美咧""好活"。语言直白爽朗。只输出方言文字，控制在50字内，标准汉字。';
+const P_SHANNAN='你扮演陕南本地居民，用轻柔温婉的陕南口语风格改写内容。使用陕南方言——"蛮舒服""可好啦""晓得不""得行""莫问题"。语气舒缓柔和。只输出结果，控制在50字内，标准汉字。';
+const P_CLASSICAL='将用户输入的陕西相关现代文案转化为贴合大唐长安风格的古典文雅短句，文风古韵十足。只输出改写后古风文字，控制在60字内，用词典雅。';
+const P_DICT='对用户输入的陕西方言词汇或生僻字进行解码，按以下格式输出：1.【发音】标注读音和声调 2.【释义】标准含义 3.【地域】所属方言区（关中/陕北/陕南）4.【典故】由来的民俗背景或历史典故。条理清晰，控制在120字内。';
+const PROMPTS={guanzhong:P_GUANZHONG,shanbei:P_SHANBEI,shannan:P_SHANNAN,classical:P_CLASSICAL,dict:P_DICT};
+
+// ================================================================
+// ★ FUNC1 — 乡音翻译机
+// ================================================================
+async function translateDialect(){
+    var input=document.getElementById('input1').value.trim();
+    if(!input){alert('请先输入普通话语句');return;}
+    var dialect=document.getElementById('dialectSelect').value;
+    var pk={'关中':'guanzhong','陕北':'shanbei','陕南':'shannan'}[dialect]||'guanzhong';
+    var btn=document.getElementById('btnTranslate');btn.disabled=true;btn.innerHTML='<span class="loading"><span class="spinner"></span>转译中...</span>';
+    try{
+        var r=await callAI(PROMPTS[pk],input);
+        document.getElementById('resultText1').textContent=r;
+        document.getElementById('result1').classList.add('show');
+        var vb=document.getElementById('voiceBtn1');vb.dataset.voiceStyle=pk;vb.dataset.voiceText=r;
+    }catch(e){alert('转译失败: '+e.message);document.getElementById('result1').classList.remove('show');}
+    finally{btn.disabled=false;btn.innerHTML='✨ 一键转译';}
+}
+
+// ================================================================
+// ★ FUNC2 — 大唐雅言
+// ================================================================
+async function toClassical(){
+    var input=document.getElementById('input3').value.trim();
+    if(!input){alert('请先输入文旅文案');return;}
+    var btn=document.getElementById('btnClassical');btn.disabled=true;btn.innerHTML='<span class="loading"><span class="spinner"></span>转化中...</span>';
+    try{
+        var r=await callAI(PROMPTS.classical,input);
+        document.getElementById('resultText3').textContent=r;
+        document.getElementById('result3').classList.add('show');
+        var vb=document.getElementById('voiceBtn3');vb.dataset.voiceStyle='classical';vb.dataset.voiceText=r;
+    }catch(e){alert('转化失败: '+e.message);document.getElementById('result3').classList.remove('show');}
+    finally{btn.disabled=false;btn.innerHTML='🏮 转为古雅言';}
+}
+
+// ================================================================
+// ★ FUNC3 — 秦字解码局
+// ================================================================
+async function analyzeWord(){
+    var input=document.getElementById('input2').value.trim();
+    if(!input){alert('请先输入方言词汇或生僻字');return;}
+    var btn=document.getElementById('btnDict');btn.disabled=true;btn.innerHTML='<span class="loading"><span class="spinner"></span>解码中...</span>';
+    try{
+        var r=await callAI(PROMPTS.dict,input);
+        var lines=r.split('\n').filter(function(l){return l.trim();});
+        var html='';
+        for(var i=0;i<lines.length;i++){
+            var line=lines[i];var key='';var val=line;
+            var m=line.match(/^[【\[](.+?)[】\]](.*)/);
+            if(m){key=m[1];val=m[2];}
+            html+='<div class="dict-entry"><span class="dk">'+(key||'')+'</span><span class="dv">'+val+'</span></div>';
+        }
+        document.getElementById('resultText2').innerHTML=html||r;
+        document.getElementById('result2').classList.add('show');
+        var vb=document.getElementById('voiceBtn2');vb.dataset.voiceStyle='normal';vb.dataset.voiceText=input;
+    }catch(e){alert('解码失败: '+e.message);document.getElementById('result2').classList.remove('show');}
+    finally{btn.disabled=false;btn.innerHTML='📖 解码溯源';}
+}
+
+// ================================================================
+// ★ VOICE
+// ================================================================
+function normalizeText(text){
+    text=text.trim().replace(/\s+/g,'');
+    if(!/[。！？!?]$/.test(text))text+='。';
+    text=text.replace(/([咧呢嘛哈呀哇哦咯哩呗噢啊])([^\s，,。！？!?])/g,'$1，$2');
+    return text;
+}
+function speakWithEdgeTTS(text,style,btn){
+    return new Promise(function(resolve,reject){
+        var url=EDGE_TTS.apiUrl+'/tts?text='+encodeURIComponent(normalizeText(text))+'&style='+(style||'normal');
+        if(btn){btn.disabled=true;btn.classList.add('playing');btn.innerHTML='🎧 合成中...';}
+        fetch(url,{signal:AbortSignal.timeout(30000)}).then(function(r){
+            if(!r.ok)return r.text().then(function(t){throw new Error('TTS失败: '+t.substring(0,100));});
+            return r.blob();
+        }).then(function(blob){
+            var u=URL.createObjectURL(blob);var a=new Audio(u);
+            a.onended=function(){URL.revokeObjectURL(u);if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}resolve();};
+            a.onerror=function(){URL.revokeObjectURL(u);reject(new Error('播放失败'));};
+            a.play().catch(function(e){URL.revokeObjectURL(u);reject(e);});
+        }).catch(function(e){if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}reject(e);});
+    });
+}
+function speakWithXunfei(text,style,btn){
+    return new Promise(function(resolve,reject){
+        try{
+            var vn=XUNFEI.voices[style]||XUNFEI.voices.normal;
+            var host='tts-api.xfyun.cn';var date=new Date().toUTCString();
+            var sig=XF_HMAC.hmacBase64(XUNFEI.apiSecret,'host: '+host+'\ndate: '+date+'\nGET /v2/tts HTTP/1.1');
+            var auth='api_key="'+XUNFEI.apiKey+'", algorithm="hmac-sha256", headers="host date request-line", signature="'+sig+'"';
+            var wsUrl='wss://tts-api.xfyun.cn/v2/tts?authorization='+encodeURIComponent(auth)+'&date='+encodeURIComponent(date)+'&host='+host;
+            if(btn){btn.disabled=true;btn.classList.add('playing');btn.innerHTML='🔊 播放中...';}
+            var ws=new WebSocket(wsUrl);var chunks=[];var perr=null;var closed=false;
+            ws.onopen=function(){ws.send(JSON.stringify({common:{app_id:XUNFEI.appId},business:{aue:'lame',sfl:1,vcn:vn,speed:50,pitch:50,volume:50,tte:'UTF8'},data:{status:2,text:btoa(unescape(encodeURIComponent(text)))}}));};
+            ws.onmessage=function(ev){try{var r=JSON.parse(ev.data);if(r.code!==0){perr=new Error(r.message);ws.close();}if(r.data&&r.data.audio)chunks.push(r.data.audio);if(r.data&&r.data.status===2)ws.close();}catch(ex){perr=ex;ws.close();}};
+            ws.onclose=function(){
+                closed=true;if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}
+                if(perr){reject(perr);return;}
+                if(!chunks.length){reject(new Error('无音频数据'));return;}
+                var fb64=chunks.join('');var bs=atob(fb64);var bytes=new Uint8Array(bs.length);
+                for(var i=0;i<bs.length;i++)bytes[i]=bs.charCodeAt(i);
+                var blob=new Blob([bytes],{type:'audio/mpeg'});var u=URL.createObjectURL(blob);var a=new Audio(u);
+                a.onended=function(){URL.revokeObjectURL(u);resolve();};
+                a.onerror=function(){URL.revokeObjectURL(u);reject(new Error('播放失败'));};
+                a.play().catch(function(e){URL.revokeObjectURL(u);reject(e);});
+            };
+            setTimeout(function(){if(!closed){closed=true;ws.close();reject(new Error('超时'));}},15000);
+        }catch(e){if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}reject(e);}
+    });
+}
+function speakWithWebSpeech(text,style,btn){
+    return new Promise(function(resolve,reject){
+        if(!window.speechSynthesis){reject(new Error('不支持'));return;}
+        window.speechSynthesis.cancel();
+        var styles={guanzhong:{rate:1.15,pitch:1.15},shanbei:{rate:0.85,pitch:0.85},shannan:{rate:0.95,pitch:1.05},classical:{rate:0.7,pitch:0.95},normal:{rate:1.0,pitch:1.0}};
+        var vs=styles[style]||styles.normal;
+        var u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=vs.rate;u.pitch=vs.pitch;u.volume=1;
+        var zh=speechSynthesis.getVoices().find(function(v){return v.lang.startsWith('zh');});if(zh)u.voice=zh;
+        if(btn){btn.disabled=true;btn.classList.add('playing');btn.innerHTML='🔊 播放中...';}
+        u.onend=function(){if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}resolve();};
+        u.onerror=function(){if(btn){btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}reject(new Error('失败'));};
+        speechSynthesis.speak(u);
+    });
+}
+function speakText(text,style,btn){
+    if(voiceEngine==='edgetts')return speakWithEdgeTTS(text,style,btn).catch(function(e){console.warn(e);return speakWithWebSpeech(text,style,btn);});
+    if(voiceEngine==='xunfei')return speakWithXunfei(text,style,btn).catch(function(e){console.warn(e);return speakWithWebSpeech(text,style,btn);});
+    return speakWithWebSpeech(text,style,btn);
+}
+async function playVoice(resultTextId,btnId,style){
+    var textEl=document.getElementById(resultTextId);
+    var btn=document.getElementById(btnId);
+    if(!btn)return;
+    var text=btn.dataset.voiceText||(textEl?textEl.textContent:'');
+    var st=btn.dataset.voiceStyle||style;
+    if(!text){alert('没有可播放的文字');return;}
+    btn.disabled=true;btn.innerHTML='<span class="loading"><span class="spinner"></span>加载语音...</span>';
+    try{await speakText(text,st,btnId);}
+    catch(e){alert('语音播放失败: '+e.message);btn.disabled=false;btn.classList.remove('playing');btn.innerHTML='🔊 播放方言语音';}
+}
+
+// ================================================================
+// ★ ROULETTE
+// ================================================================
+(function(){
+    var foods=['肉夹馍','凉皮','葫芦头','水盆羊肉','甑糕','面条','冰峰','烤肉'];
+    var cols=['#FFF8EE','#D4A84B','#FFF8EE','#D4A84B','#FFF8EE','#D4A84B','#FFF8EE','#D4A84B'];
+    var seg=360/foods.length;
+    var grad=[];for(var i=0;i<foods.length;i++){grad.push(cols[i]+' '+(i*seg)+'deg '+((i+1)*seg)+'deg');}
+    var wheel=document.getElementById('rouletteWheel');
+    wheel.style.background='conic-gradient('+grad.join(',')+')';
+    var html='';
+    for(var i=0;i<foods.length;i++){
+        var ang=(i*seg+seg/2-90)*Math.PI/180;
+        var r=100;
+        html+='<span style="position:absolute;left:'+(150+r*Math.cos(ang))+'px;top:'+(150+r*Math.sin(ang))+'px;transform:translate(-50%,-50%) rotate('+(i*seg+seg/2-90)+'deg);font-size:13px;font-weight:700;color:var(--ink);pointer-events:none;">'+foods[i]+'</span>';
+    }
+    wheel.innerHTML+=html;
+    wheel.dataset.deg=0;
+
+    window.spinRoulette=function(){
+        if(wheel.dataset.spin==='1')return;
+        wheel.dataset.spin='1';
+        var btn=wheel.parentElement.querySelector('.roulette-btn');btn.textContent='...';
+        var td=Number(wheel.dataset.deg)+5*360+Math.floor(Math.random()*360);
+        wheel.style.transform='rotate('+td+'deg)';
+        wheel.dataset.deg=td;
+        setTimeout(function(){
+            wheel.dataset.spin='0';btn.textContent='抽';
+            var idx=Math.floor((360-(td%360))/seg)%foods.length;
+            showModal('🎰 今晚就吃','<strong>'+foods[idx]+'</strong>！','再来一抽',function(){});
+        },4200);
+    };
+})();
+
+// ================================================================
+// ★ FORTUNE
+// ================================================================
+(function(){
+    var fortunes=[
+        {lv:'上上签',txt:'肉夹馍自由，钱包鼓鼓，日子嫽咋咧！'},
+        {lv:'上签',txt:'遇贵人相助，吃凉皮多给一勺辣子。'},
+        {lv:'中上签',txt:'葫芦头越吃越香，好运如汤头般浓郁。'},
+        {lv:'上上签',txt:'长安花开，前程似锦，一切顺遂！'},
+        {lv:'中签',txt:'平平淡淡才是真，一碗面条暖心窝。'},
+        {lv:'上签',txt:'转角遇惊喜，冰峰喝出人生新味道。'},
+        {lv:'上上签',txt:'福星高照，水盆羊肉般滚烫的好运来了！'},
+        {lv:'下签',txt:'甑糕太甜腻？莫急，先苦后甜是长安古训。'}
+    ];
+    window.drawFortune=function(){
+        var tube=document.getElementById('fortuneTube');
+        var btn=document.getElementById('btnFortune');
+        if(tube.classList.contains('shaking'))return;
+        tube.classList.add('shaking');btn.disabled=true;btn.textContent='🎋 摇晃中...';
+        setTimeout(function(){
+            tube.classList.remove('shaking');btn.disabled=false;btn.textContent='🎋 摇一摇求签';
+            var f=fortunes[Math.floor(Math.random()*fortunes.length)];
+            showModal('🎋 '+f.lv,f.txt,'再求一签',function(){});
+        },1500);
+    };
+})();
+
+// ================================================================
+// ★ QUIZ
+// ================================================================
+(function(){
+    var questions=[
+        {q:'"嫽咋咧"是什么意思？',opts:['非常好','很糟糕','天气冷','肚子饿'],ans:0},
+        {q:'"咥饭"的意思是？',opts:['做饭','吃饭','洗碗','请客'],ans:1},
+        {q:'关中人说的"谝闲传"指什么？',opts:['写书信','谈生意','聊天吹牛','读书'],ans:2}
+    ];
+    var score=0,current=0;
+    function render(){
+        if(current>=questions.length){showResult();return;}
+        var q=questions[current];
+        var h='<div class="card"><div class="quiz-progress">第'+(current+1)+'/'+questions.length+'题</div>';
+        h+='<div class="quiz-q">'+q.q+'</div>';
+        for(var i=0;i<q.opts.length;i++){
+            h+='<button class="quiz-opt" onclick="answerQuiz('+i+',this)">'+'ABCD'[i]+'. '+q.opts[i]+'</button>';
+        }
+        h+='</div>';
+        document.getElementById('quizArea').innerHTML=h;
+    }
+    window.answerQuiz=function(idx,el){
+        var q=questions[current];
+        var all=el.parentElement.querySelectorAll('.quiz-opt');
+        all.forEach(function(o){o.style.pointerEvents='none';});
+        if(idx===q.ans){el.classList.add('right');score++;}
+        else{el.classList.add('wrong');all[q.ans].classList.add('right');}
+        current++;setTimeout(render,800);
+    };
+    function showResult(){
+        var g=score===3?'🎉 老陕状元！':score===2?'👍 老陕举人！':score===1?'📚 还需修炼':'😅 新来的吧';
+        showModal('📝 老陕认证成绩单','答对 <strong>'+score+'</strong>/'+questions.length+' 题<br>'+g,'再考一次',function(){score=0;current=0;render();});
+    }
+    window.initQuiz=function(){score=0;current=0;render();};
+})();
+
+// ================================================================
+// ★ MODAL
+// ================================================================
+function showModal(title,body,btnText,cb){
+    var ex=document.querySelector('.modal');if(ex)ex.remove();
+    var ov=document.createElement('div');ov.className='modal';
+    ov.innerHTML='<div class="modal-box"><h3>'+title+'</h3><p>'+body+'</p><button class="btn btn-red" id="modalBtn">'+btnText+'</button></div>';
+    document.body.appendChild(ov);
+    var close=function(){ov.remove();if(cb)cb();};
+    ov.querySelector('#modalBtn').onclick=close;
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+}
+
+// ================================================================
+// ★ KEYBOARD
+// ================================================================
+document.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+        var a=document.activeElement;
+        if(a&&a.id==='input1')translateDialect();
+        else if(a&&a.id==='input2')analyzeWord();
+        else if(a&&a.id==='input3')toClassical();
+    }
+});
+
+// ================================================================
+// ★ INIT
+// ================================================================
+(function(){
+    var s=localStorage.getItem('edgettsApiUrl');
+    if(s){EDGE_TTS.apiUrl=s;var el=document.getElementById('etApiUrl');if(el)el.value=s;}
+    document.getElementById('dialectSelect').addEventListener('change',function(){
+        var vb=document.getElementById('voiceBtn1');
+        vb.dataset.voiceStyle={'关中':'guanzhong','陕北':'shanbei','陕南':'shannan'}[this.value]||'guanzhong';
+    });
+    document.getElementById('voiceBtn1').dataset.voiceStyle='guanzhong';
+    document.getElementById('voiceBtn3').dataset.voiceStyle='classical';
+    document.getElementById('voiceBtn2').dataset.voiceStyle='normal';
+    checkEdgeTTSStatus();
+    console.log('🏮 秦言三韵 · 掌上长安数字文旅驿站 已就绪');
+})();
+</script>
+</body>
+</html>

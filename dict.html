@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦字解码局 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 示例词条横滑 */
+.examples-wrap { margin-bottom:16px; }
+.examples-scroll {
+    display:flex; gap:10px; overflow-x:auto; padding:12px 4px 8px;
+    scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin; scrollbar-color:rgba(191,149,48,0.2) transparent;
+}
+.examples-scroll::-webkit-scrollbar { height:4px; }
+.examples-scroll::-webkit-scrollbar-thumb { background:rgba(191,149,48,0.25); border-radius:2px; }
+.ex-chip {
+    flex-shrink:0; padding:10px 22px; border-radius:10px;
+    border:1.5px solid rgba(191,149,48,0.15); background:var(--white);
+    font-size:22px; font-family:'STKaiti','KaiTi',serif;
+    color:var(--ink); cursor:pointer; transition:all 0.2s;
+    white-space:nowrap; font-weight:600;
+    box-shadow:0 1px 4px rgba(35,24,18,0.03);
+}
+.ex-chip:hover { border-color:var(--gold); background:#FFFDF4; transform:translateY(-2px); }
+.ex-chip:active { transform:scale(0.95); background:var(--gold-l); }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html" class="on"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav"><a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a></nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">秦字解码局</span></div>
+<div class="page-content">
+
+<div class="card card-cream">
+    <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:0 12px;border:1.5px solid rgba(191,149,48,0.15);">
+        <span style="font-size:24px;">🔍</span>
+        <input type="text" id="input2" placeholder="输入方言词汇，如：咥、嫽、biang" style="border:none;background:transparent;flex:1;padding:13px 0;font-size:30px;font-family:inherit;outline:none;color:var(--ink);">
+    </div>
+    <div class="form-row"><button class="btn btn-red" id="btnDict" onclick="analyzeWord()">📖 解码溯源</button></div>
+</div>
+
+<!-- 示例词条 -->
+<div class="examples-wrap">
+    <div class="examples-scroll" id="examplesScroll">
+        <button class="ex-chip" onclick="pickExample('咥')">咥</button>
+        <button class="ex-chip" onclick="pickExample('嫽咋咧')">嫽咋咧</button>
+        <button class="ex-chip" onclick="pickExample('谝闲传')">谝闲传</button>
+        <button class="ex-chip" onclick="pickExample('受活')">受活</button>
+        <button class="ex-chip" onclick="pickExample('咋咧')">咋咧</button>
+        <button class="ex-chip" onclick="pickExample('biang')">biang</button>
+        <button class="ex-chip" onclick="pickExample('敞亮')">敞亮</button>
+        <button class="ex-chip" onclick="pickExample('得行')">得行</button>
+        <button class="ex-chip" onclick="pickExample('莫问题')">莫问题</button>
+        <button class="ex-chip" onclick="pickExample('甑糕')">甑糕</button>
+        <button class="ex-chip" onclick="pickExample('葫芦头')">葫芦头</button>
+        <button class="ex-chip" onclick="pickExample('水盆羊肉')">水盆羊肉</button>
+    </div>
+</div>
+
+<div class="result-box" id="result2">
+    <div id="resultText2"></div>
+    <div class="form-row"><button class="btn btn-jade" id="voiceBtn2" onclick="playVoice('resultText2','voiceBtn2','normal')">🔊 播放词汇发音</button></div>
+</div>
+
+<p style="text-align:center;margin-top:14px;font-size:22px;color:var(--brown-l);">状态：<span id="apiStatus">就绪</span></p>
+</div>
+<img src="img/deco-3.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/祈祷牌.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+document.getElementById('voiceBtn2').dataset.voiceStyle='normal';
+
+function pickExample(word){
+    document.getElementById('input2').value = word;
+    analyzeWord();
+}
+
+async function analyzeWord(){
+    var i=document.getElementById('input2').value.trim();
+    if(!i){alert('请先输入方言词汇');return;}
+    var b=document.getElementById('btnDict');b.disabled=true;b.innerHTML='<span class="loading"><span class="spinner"></span>解码中...</span>';
+    try{var r=await callAI(PROMPTS.dict,i);var ls=r.split('\n').filter(function(l){return l.trim();});var h='';for(var j=0;j<ls.length;j++){var ln=ls[j],k='',v=ln;var m=ln.match(/^[【\[](.+?)[】\]](.*)/);if(m){k=m[1];v=m[2];}h+='<div class="dict-entry"><span class="dk">'+(k||'')+'</span><span class="dv">'+v+'</span></div>';}document.getElementById('resultText2').innerHTML=h||r;document.getElementById('result2').classList.add('show');document.getElementById('voiceBtn2').dataset.voiceText=i;}
+    catch(e){alert('解码失败: '+e.message);document.getElementById('result2').classList.remove('show');}
+    finally{b.disabled=false;b.innerHTML='📖 解码溯源';}
+}
+
+function fadeTo(u){document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';setTimeout(function(){window.location.href=u;},150);}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});});
+</script>
+</body>
+</html>

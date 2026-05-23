@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方言保护 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.p-page { max-width:900px; margin:0 auto; padding:32px 24px 48px; }
+.p-card {
+    background:linear-gradient(175deg, #FFFDF6 0%, #F9F3E6 100%);
+    border-radius:14px; padding:32px 30px 28px; margin-bottom:24px;
+    border:1px solid rgba(191,149,48,0.1);
+    box-shadow:0 2px 12px rgba(35,24,18,0.04),0 8px 28px rgba(35,24,18,0.05);
+    position:relative; overflow:hidden;
+}
+.p-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:repeating-linear-gradient(90deg,var(--gold),var(--gold) 10px,transparent 10px,transparent 15px,var(--gold-d) 15px,var(--gold-d) 20px,transparent 20px,transparent 25px);
+    opacity:0.5; z-index:2;
+}
+.p-card h3 { font-size:24px; color:var(--red-d); margin-bottom:6px; font-family:'STKaiti','KaiTi',serif; letter-spacing:2px; }
+.p-card .sub { font-size:16px; color:var(--brown-l); margin-bottom:18px; }
+
+/* 统计 */
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+.stat-box { text-align:center; padding:22px 12px; background:var(--white); border-radius:10px; border:1px solid rgba(191,149,48,0.06); }
+.stat-box .num { font-size:42px; font-weight:900; color:var(--red); font-family:'STKaiti','KaiTi',serif; }
+.stat-box .num.gold { color:var(--gold-d); }
+.stat-box .label { font-size:14px; color:var(--brown-l); margin-top:4px; }
+
+/* 三地区域卡片 */
+.region-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+.region-card { padding:22px 18px; border-radius:12px; text-align:center; border:1px solid rgba(191,149,48,0.1); }
+.region-card h4 { font-size:20px; margin-bottom:8px; font-family:'STKaiti','KaiTi',serif; letter-spacing:2px; }
+.region-card .cities { font-size:14px; color:var(--brown-l); line-height:1.7; }
+.region-card.gz { background:linear-gradient(180deg, #FFF0E8 0%, #FFF 100%); border-left:3px solid var(--red); }
+.region-card.sb { background:linear-gradient(180deg, #FFF8E8 0%, #FFF 100%); border-left:3px solid var(--gold); }
+.region-card.sn { background:linear-gradient(180deg, #E8F5EC 0%, #FFF 100%); border-left:3px solid var(--jade); }
+
+/* 濒危指示 */
+.danger-bar { display:flex; align-items:center; gap:10px; margin:6px 0; }
+.danger-bar .bar-track { flex:1; height:8px; background:var(--bg); border-radius:4px; overflow:hidden; }
+.danger-bar .bar-fill { height:100%; border-radius:4px; transition:width 0.6s; }
+.danger-bar .bar-fill.safe { background:var(--jade); }
+.danger-bar .bar-fill.warn { background:var(--gold); }
+.danger-bar .bar-fill.danger { background:var(--red); }
+.danger-label { font-size:13px; color:var(--brown-l); white-space:nowrap; min-width:70px; }
+
+/* 项目贡献 */
+.impact-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.impact-item { text-align:center; padding:20px 14px; background:var(--white); border-radius:10px; border:1px solid rgba(191,149,48,0.08); }
+.impact-item .icon { font-size:32px; margin-bottom:6px; }
+.impact-item .title { font-size:16px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.impact-item .desc { font-size:13px; color:var(--brown-l); line-height:1.5; }
+
+/* 引用块 */
+.quote { padding:16px 20px; background:var(--bg); border-radius:8px; border-left:3px solid var(--gold); font-size:15px; color:var(--brown); line-height:1.7; font-style:italic; }
+.quote .src { font-size:12px; color:var(--brown-l); margin-top:6px; font-style:normal; }
+
+@media(max-width:700px){ .stat-row,.region-row,.impact-row{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav">
+        <a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html" class="on"><span class="si">🏛️</span>方言保护</a>
+    </nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">方言保护</span></div>
+<div class="p-page">
+
+<!-- 概况 -->
+<div class="p-card">
+    <h3>🏛️ 陕西方言保护现状</h3>
+    <div class="sub">数据来源：《陕西方言集成》丛书 · 陕西省档案局 · 商务印书馆 · 2019-2024</div>
+    <div class="stat-row">
+        <div class="stat-box"><div class="num">89</div><div class="label">覆盖区县</div></div>
+        <div class="stat-box"><div class="num gold">310G</div><div class="label">语音档案数据库</div></div>
+        <div class="stat-box"><div class="num">10卷</div><div class="label">方言集成丛书</div></div>
+    </div>
+    <div class="quote">
+        "陕西省档案局历时六年九个月，完成省、市、县三级方言语音档案建库工作，总规模 310G，覆盖全省 10 个市、89 个区县。"<br>
+        <span class="src">—— 陕西日报，2021 年 11 月 14 日</span>
+    </div>
+</div>
+
+<!-- 三地方言 -->
+<div class="p-card">
+    <h3>🗺️ 三秦方言地理分布</h3>
+    <div class="sub">关中 · 陕北 · 陕南 —— 三大方言区，各具音韵特色</div>
+    <div class="region-row">
+        <div class="region-card gz">
+            <h4>🔴 关中方言</h4>
+            <p class="cities">西安 · 咸阳 · 宝鸡 · 渭南<br>铜川 · 杨凌 · 韩城</p>
+            <div class="danger-bar"><span class="danger-label">传承状况</span><div class="bar-track"><div class="bar-fill safe" style="width:65%"></div></div><span style="font-size:12px;">较稳定</span></div>
+            <p style="font-size:13px;color:var(--brown-l);margin-top:8px;">人口基数大，日常使用频率较高，但年轻一代方言能力明显下降</p>
+        </div>
+        <div class="region-card sb">
+            <h4>🟡 陕北方言</h4>
+            <p class="cities">延安 · 榆林</p>
+            <div class="danger-bar"><span class="danger-label">传承状况</span><div class="bar-track"><div class="bar-fill warn" style="width:48%"></div></div><span style="font-size:12px;">需关注</span></div>
+            <p style="font-size:13px;color:var(--brown-l);margin-top:8px;">晋语分支，保留大量古汉语特征。城镇化加速导致使用场景缩减</p>
+        </div>
+        <div class="region-card sn">
+            <h4>🟢 陕南方言</h4>
+            <p class="cities">汉中 · 安康 · 商洛</p>
+            <div class="danger-bar"><span class="danger-label">传承状况</span><div class="bar-track"><div class="bar-fill warn" style="width:42%"></div></div><span style="font-size:12px;">需关注</span></div>
+            <p style="font-size:13px;color:var(--brown-l);margin-top:8px;">属西南官话，与川渝方言接近。多方言混杂，保护难度大</p>
+        </div>
+    </div>
+</div>
+
+<!-- 项目贡献 -->
+<div class="p-card">
+    <h3>💡 本项目对方言保护的贡献</h3>
+    <div class="sub">AI 技术赋能非物质文化遗产的数字化传承</div>
+    <div class="impact-row">
+        <div class="impact-item">
+            <div class="icon">🤖</div>
+            <div class="title">AI 方言转译</div>
+            <div class="desc">大模型驱动的普通话↔方言互译，降低方言使用门槛，让年轻人轻松接触纯正方言表达</div>
+        </div>
+        <div class="impact-item">
+            <div class="icon">🎙️</div>
+            <div class="title">语音克隆保护</div>
+            <div class="desc">神经网络语音合成技术留存方言音色，即使原生 speakers 减少，方言声音不会消失</div>
+        </div>
+        <div class="impact-item">
+            <div class="icon">📖</div>
+            <div class="title">数字化词典</div>
+            <div class="desc">方言生僻字发音·释义·典故全解析，构建可检索、可传播的数字方言知识库</div>
+        </div>
+    </div>
+</div>
+
+<!-- 权威背书 -->
+<div class="p-card">
+    <h3>📚 权威背书</h3>
+    <div class="sub">本项目参考的学术与官方资源</div>
+    <div style="font-size:16px;color:var(--ink);line-height:2;">
+        <p>📕 <strong>《陕西方言集成》</strong>（10卷）—— 陕西省档案局编纂，商务印书馆出版，含 120G 可扫码收听音频</p>
+        <p>📕 <strong>陕西 310G 方言语音档案专库</strong> —— 省/市/县三级全覆盖，含声母韵母声调、词汇、语法、民歌戏曲</p>
+        <p>📕 <strong>中国语言资源保护工程</strong> —— 教育部、国家语委主导，全国范围内方言调查与数字化存档</p>
+        <p>📕 <strong>《中国濒危语言志·汉语方言卷》</strong> —— 商务印书馆，系统记录濒危方言现状</p>
+    </div>
+</div>
+
+</div>
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+function fadeTo(u){
+    document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';
+    setTimeout(function(){window.location.href=u;},150);
+}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});
+});
+// 柱状条动画
+setTimeout(function(){
+    document.querySelectorAll('.bar-fill').forEach(function(b){ b.style.width = b.style.width; });
+}, 300);
+</script>
+</body>
+</html>

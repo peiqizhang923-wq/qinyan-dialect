@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方言八级考 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.qz-q{font-weight:700;font-size:28px;margin-bottom:18px;}
+.qz-n{font-size:20px;color:var(--brown-l);margin-bottom:8px;}
+.qz-opt{display:block;width:100%;padding:13px 18px;margin:7px 0;border:1.5px solid rgba(200,164,90,0.12);border-radius:10px;background:var(--surface);font-size:26px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.2s;}
+.qz-opt:hover{border-color:var(--gold);background:#FFFDF4;}
+.qz-opt.right{border-color:var(--jade);background:#E8F5E9;color:#2E5A2E;}
+.qz-opt.wrong{border-color:var(--red);background:#FFEBEE;color:var(--red-d);}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html" class="on"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav"><a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a></nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">方言八级考</span></div>
+<div class="page-content" id="quizArea"></div>
+<img src="img/腰鼓.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/deco-1.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+// 题库（16道，每轮随机抽3道，Fisher-Yates 洗牌保证低重合）
+var QUESTION_BANK = [
+    {q:'"嫽咋咧"是什么意思？',o:['非常好','很糟糕','天气冷','肚子饿'],a:0},
+    {q:'"咥饭"的意思是？',o:['做饭','吃饭','洗碗','请客'],a:1},
+    {q:'关中人说的"谝闲传"指什么？',o:['写书信','谈生意','聊天吹牛','读书'],a:2},
+    {q:'"受活"在陕西方言中是什么意思？',o:['受苦','舒服','干活','生气'],a:1},
+    {q:'"咋咧"是什么意思？',o:['怎么办','怎么了','为什么','哪里'],a:1},
+    {q:'关中人说的"额"是指？',o:['额头','我','你','钱'],a:1},
+    {q:'"甑糕"的正确读音是？',o:['zèng gāo','jìng gāo','céng gāo','zēng gǎo'],a:1},
+    {q:'陕北话"可美咧"是什么意思？',o:['太美了','很一般','很丑','还可以'],a:0},
+    {q:'陕南话"蛮舒服"的意思是？',o:['很难受','挺舒服','很慢','很野蛮'],a:1},
+    {q:'"biangbiang面"的"biang"字有多少笔画？',o:['42画','56画','38画','62画'],a:1},
+    {q:'关中人说的"碎娃"指什么？',o:['打碎的娃娃','小孩','老人','碎片'],a:1},
+    {q:'"木乱"在陕西方言中形容什么心情？',o:['开心','烦躁不安','木头般的','混乱'],a:1},
+    {q:'陕西方言"克里马擦"是什么意思？',o:['慢慢来','快点、利索','擦干净','骑马'],a:1},
+    {q:'"哈怂"在陕西方言中指什么？',o:['好人','坏人、坏蛋','傻子','朋友'],a:1},
+    {q:'陕西方言"扎势"是什么意思？',o:['摆架子、装样子','驻扎','扎针','势力大'],a:0},
+    {q:'"麻达"在陕西方言中表示？',o:['麻辣味道','麻烦、问题','达到目标','麻木'],a:1}
+];
+
+// Fisher-Yates 洗牌
+function shuffle(arr){
+    var a = arr.slice();
+    for(var i = a.length-1; i>0; i--){
+        var j = Math.floor(Math.random()*(i+1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
+var qs = [], sc = 0, cur = 0, total = 3;
+
+function pickQuestions(){
+    var pool = shuffle(QUESTION_BANK);
+    return pool.slice(0, total);
+}
+
+function rn(){
+    if(cur >= qs.length){ sr(); return; }
+    var q = qs[cur];
+    var h = '<div class="card"><div class="qz-n">第'+(cur+1)+'/'+qs.length+'题</div><div class="qz-q">'+q.q+'</div>';
+    for(var i=0; i<q.o.length; i++){
+        h += '<button class="qz-opt" onclick="ans('+i+',this)">'+'ABCD'[i]+'. '+q.o[i]+'</button>';
+    }
+    h += '</div>';
+    document.getElementById('quizArea').innerHTML = h;
+}
+
+window.ans = function(i, el){
+    var q = qs[cur];
+    var all = el.parentElement.querySelectorAll('.qz-opt');
+    all.forEach(function(o){ o.style.pointerEvents = 'none'; });
+    if(i === q.a){ el.classList.add('right'); sc++; }
+    else{ el.classList.add('wrong'); all[q.a].classList.add('right'); }
+    cur++;
+    setTimeout(rn, 700);
+};
+
+function sr(){
+    var g = sc===3?'🎉 老陕状元！':sc===2?'👍 老陕举人！':sc===1?'📚 还需修炼':'😅 新来的吧';
+    showModal('📝 成绩单','答对 <strong>'+sc+'</strong>/'+qs.length+' 题<br>'+g,'再考一次',function(){
+        sc = 0; cur = 0;
+        qs = pickQuestions();
+        rn();
+    });
+}
+
+// 启动
+qs = pickQuestions();
+rn();
+
+function fadeTo(u){document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';setTimeout(function(){window.location.href=u;},150);}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});});
+</script>
+</body>
+</html>

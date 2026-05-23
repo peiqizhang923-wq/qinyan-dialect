@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>乡音翻译机 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.translate-layout { display:flex; gap:24px; padding:32px 28px 48px; }
+.translate-main { flex:1; min-width:0; }
+.translate-side { width:220px; flex-shrink:0; }
+.paper-wrap {
+    position:relative; border-radius:6px; background-color:#F5EFE0;
+    padding:40px 36px 50px; overflow:hidden; margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(35,24,18,0.06),0 8px 24px rgba(35,24,18,0.08),0 16px 40px rgba(35,24,18,0.06);
+    transition:box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.paper-wrap::before { content:''; position:absolute; inset:0; background:url('img/paper-bg.png') center/cover no-repeat; opacity:0.25; pointer-events:none; z-index:0; }
+.paper-wrap>*{position:relative;z-index:1;}
+.paper-textarea { width:100%; height:140px; resize:vertical; background:transparent; border:none; outline:none; font-size:32px; font-family:'STKaiti','KaiTi','Noto Serif SC',serif; color:#1A110B; font-weight:700; line-height:2.2; caret-color:var(--red); }
+.paper-textarea::placeholder { color:rgba(90,60,40,0.35); font-weight:400; font-size:28px; }
+.knob-row { display:flex; align-items:center; gap:14px; margin-top:20px; padding-top:16px; border-top:1px solid rgba(139,105,20,0.15); }
+.knob-img { width:48px; height:48px; cursor:pointer; transition:transform 0.4s cubic-bezier(0.25,1,0.5,1); filter:drop-shadow(0 2px 4px rgba(35,24,18,0.2)); user-select:none; flex-shrink:0; }
+.knob-select { appearance:none; -webkit-appearance:none; background:transparent; border:none; outline:none; font-size:24px; font-family:inherit; color:var(--brown); cursor:pointer; padding:8px 28px 8px 0; font-weight:600; letter-spacing:1px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' stroke='%234A3020' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right center; transition:color 0.3s cubic-bezier(0.22,1,0.36,1); }
+.knob-select:hover{color:var(--red);}
+.paper-output { display:none; position:relative; background-color:#F5EFE0; padding:36px 36px 44px; border-radius:6px; margin-bottom:16px; overflow:hidden; box-shadow:0 2px 8px rgba(35,24,18,0.06),0 8px 24px rgba(35,24,18,0.08),0 16px 40px rgba(35,24,18,0.06); }
+.paper-output::before { content:''; position:absolute; inset:0; background:url('img/paper-bg.png') center/cover no-repeat; opacity:0.25; pointer-events:none; z-index:0; }
+.paper-output>*{position:relative;z-index:1;}
+.paper-output.show{display:block;}
+.output-text { font-size:40px; font-family:'STKaiti','KaiTi','Noto Serif SC',serif; color:#1A110B; font-weight:700; line-height:2.4; letter-spacing:3px; word-break:break-word; }
+.tiger-btn { display:inline-flex; align-items:center; justify-content:center; width:100%; height:60px; border:none; background:transparent; cursor:pointer; position:relative; margin-top:18px; transition:all 0.3s cubic-bezier(0.22,1,0.36,1); }
+.tiger-btn img { height:56px; width:auto; filter:drop-shadow(0 3px 8px rgba(35,24,18,0.2)); transition:all 0.3s cubic-bezier(0.22,1,0.36,1); }
+.tiger-btn:hover img { filter:drop-shadow(0 2px 6px rgba(200,160,60,0.6)) drop-shadow(0 6px 16px rgba(35,24,18,0.3)); transform:translateY(-2px); }
+.tiger-btn:active img{transform:scale(0.96);}
+.tiger-btn.playing img{animation:tigerPulse 1.2s cubic-bezier(0.45,0,0.55,1) infinite;}
+@keyframes tigerPulse{0%,100%{filter:drop-shadow(0 2px 6px rgba(200,160,60,0.6)) drop-shadow(0 6px 16px rgba(35,24,18,0.2));}50%{filter:drop-shadow(0 4px 14px rgba(200,160,60,0.9)) drop-shadow(0 10px 24px rgba(35,24,18,0.25));}}
+.tiger-btn .btn-label{position:absolute;bottom:-18px;font-size:11px;color:var(--brown);letter-spacing:2px;font-weight:600;pointer-events:none;}
+.btn-translate { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px 24px; border:none; border-radius:8px; font-size:30px; font-weight:600; font-family:inherit; cursor:pointer; letter-spacing:2px; background:linear-gradient(135deg,var(--red),var(--red-d)); color:#fff; box-shadow:0 2px 8px rgba(179,58,42,0.12),0 6px 20px rgba(179,58,42,0.1); transition:all 0.35s cubic-bezier(0.22,1,0.36,1); margin-top:20px; }
+.btn-translate:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(179,58,42,0.18),0 10px 28px rgba(179,58,42,0.14);}
+.btn-translate:active{transform:scale(0.97);}
+.btn-translate:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.status-line{text-align:center;margin-top:10px;font-size:22px;color:var(--brown-l);}
+.info-card { background:var(--white); border-radius:10px; padding:18px 16px; border:1px solid rgba(191,149,48,0.08); margin-bottom:12px; box-shadow:0 1px 4px rgba(35,24,18,0.03),0 4px 12px rgba(35,24,18,0.04); }
+.info-card h4{font-size:20px;color:var(--red);margin-bottom:8px;letter-spacing:2px;font-family:'STKaiti','KaiTi',serif;}
+.info-card p{font-size:18px;color:var(--brown-l);line-height:1.7;}
+.word-chip{display:inline-block;padding:4px 12px;margin:3px 5px;background:var(--bg);border-radius:4px;font-size:18px;color:var(--ink);}
+@media(max-width:700px){.translate-layout{flex-direction:column;padding:16px 12px 32px;}.translate-side{width:100%;}.paper-wrap{padding:28px 20px 34px;}.paper-output{padding:28px 20px 36px;}.paper-textarea{font-size:24px;}.output-text{font-size:28px;}.btn-translate{font-size:22px;}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div>
+    <div class="sidebar-sub">掌 上 长 安</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html" class="on"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav">
+        <a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a>
+    </nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">乡音翻译机</span></div>
+<div class="translate-layout">
+<div class="translate-main">
+<div class="paper-wrap"><textarea id="input1" class="paper-textarea" placeholder="请输入普通话短句，如：今天天气真好……"></textarea>
+<div class="knob-row"><img src="img/knob.png" class="knob-img" id="knobImg" alt="" onclick="rotateKnob()"><select id="dialectSelect" class="knob-select"><option value="关中">关中 · 西安语调</option><option value="陕北">陕北 · 黄土语调</option><option value="陕南">陕南 · 温婉语调</option></select></div></div>
+<button class="btn-translate" id="btnTranslate" onclick="translateDialect()">✨ 一键转译为方言</button>
+<div class="paper-output" id="result1"><div class="output-text" id="resultText1"></div><button class="tiger-btn" id="voiceBtn1" onclick="playVoice('resultText1','voiceBtn1','guanzhong')"><img src="img/tiger-btn.png" alt="播放"><span class="btn-label">播放方言</span></button></div>
+<p class="status-line">引擎状态：<span id="apiStatus">就绪</span></p>
+</div>
+<div class="translate-side">
+<div class="info-card"><h4>📖 关中方言词例</h4><p><span class="word-chip">咥</span>=吃 <span class="word-chip">谝闲传</span>=聊天 <span class="word-chip">嫽咋咧</span>=很好 <span class="word-chip">咋咧</span>=怎么了 <span class="word-chip">受活</span>=舒服 <span class="word-chip">溜达</span>=散步</p></div>
+<div class="info-card"><h4>📖 陕北方言词例</h4><p><span class="word-chip">敞亮</span>=宽敞明亮 <span class="word-chip">舒坦</span>=舒适 <span class="word-chip">走哇</span>=走吧 <span class="word-chip">可美咧</span>=太好了 <span class="word-chip">好活</span>=舒服</p></div>
+<div class="info-card"><h4>📖 陕南方言词例</h4><p><span class="word-chip">蛮舒服</span>=挺舒服 <span class="word-chip">可好啦</span>=非常好 <span class="word-chip">晓得不</span>=知道吗 <span class="word-chip">得行</span>=可以 <span class="word-chip">莫问题</span>=没问题</p></div>
+</div>
+</div>
+<img src="img/btn-bronze-1.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/关公皮影.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+var knobDeg=0;function rotateKnob(){knobDeg+=120;document.getElementById('knobImg').style.transform='rotate('+knobDeg+'deg)';}
+document.getElementById('dialectSelect').addEventListener('change',function(){rotateKnob();document.getElementById('voiceBtn1').dataset.voiceStyle={'关中':'guanzhong','陕北':'shanbei','陕南':'shannan'}[this.value]||'guanzhong';});
+document.getElementById('voiceBtn1').dataset.voiceStyle='guanzhong';
+async function translateDialect(){
+    var input=document.getElementById('input1').value.trim();if(!input){alert('请先输入普通话语句');return;}
+    var pk={'关中':'guanzhong','陕北':'shanbei','陕南':'shannan'}[document.getElementById('dialectSelect').value]||'guanzhong';
+    var btn=document.getElementById('btnTranslate');btn.disabled=true;btn.innerHTML='⏳ AI 转译中...';
+    try{var r=await callAI(PROMPTS[pk],input);document.getElementById('resultText1').textContent=r;document.getElementById('result1').classList.add('show');document.getElementById('voiceBtn1').dataset.voiceStyle=pk;document.getElementById('voiceBtn1').dataset.voiceText=r;}
+    catch(e){alert('转译失败: '+e.message);document.getElementById('result1').classList.remove('show');}
+    finally{btn.disabled=false;btn.innerHTML='✨ 一键转译为方言';}
+}
+function fadeTo(u){document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';setTimeout(function(){window.location.href=u;},150);}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});});
+</script>
+</body>
+</html>

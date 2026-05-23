@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引擎配置 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.set-card {
+    background:linear-gradient(175deg, #FFFDF6 0%, #F9F3E6 100%);
+    border-radius:14px; padding:36px 34px 32px;
+    border:1px solid rgba(191,149,48,0.1);
+    box-shadow:0 2px 12px rgba(35,24,18,0.04),0 8px 28px rgba(35,24,18,0.05);
+    position:relative; overflow:hidden; margin-bottom:28px;
+}
+/* 回纹顶边 */
+.set-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:repeating-linear-gradient(90deg,
+        var(--gold) 0px, var(--gold) 10px, transparent 10px, transparent 15px,
+        var(--gold-d) 15px, var(--gold-d) 20px, transparent 20px, transparent 25px);
+    opacity:0.6; z-index:2;
+}
+/* 四角 */
+.set-corner {
+    position:absolute; width:24px; height:24px; pointer-events:none; z-index:1;
+    border-color:rgba(191,149,48,0.15); border-style:solid;
+}
+.set-corner.tl{top:16px;left:16px;border-width:2px 0 0 2px;border-radius:3px 0 0 0;}
+.set-corner.tr{top:16px;right:16px;border-width:2px 2px 0 0;border-radius:0 3px 0 0;}
+.set-corner.bl{bottom:16px;left:16px;border-width:0 0 2px 2px;border-radius:0 0 0 3px;}
+.set-corner.br{bottom:16px;right:16px;border-width:0 2px 2px 0;border-radius:0 0 3px 0;}
+
+.set-section { margin-bottom:28px; position:relative; z-index:1; }
+.set-title { font-size:20px; font-weight:700; margin-bottom:6px; color:var(--ink); letter-spacing:2px; font-family:'STKaiti','KaiTi',serif; }
+.set-sub { font-size:16px; color:var(--brown-l); margin-bottom:12px; }
+.set-sub strong { color:var(--red); }
+.set-btns { display:flex; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
+.set-btns .btn-sm { font-size:18px; padding:9px 22px; }
+.set-divider {
+    width:100%; height:1px; margin:24px 0;
+    background:linear-gradient(90deg, transparent, rgba(191,149,48,0.15), transparent);
+}
+.set-status { font-size:16px; color:var(--brown-l); }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav"><a href="settings.html" class="on"><span class="si">⚙️</span>引擎配置</a>
+    <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a></nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">引擎配置</span></div>
+<div class="page-content">
+
+<!-- 文字引擎 -->
+<div class="set-card">
+    <div class="set-corner tl"></div><div class="set-corner tr"></div>
+    <div class="set-corner bl"></div><div class="set-corner br"></div>
+    <div class="set-section">
+        <div class="set-title">🔹 文字引擎</div>
+        <div class="set-sub">当前：<strong id="providerLabel">火山引擎·豆包</strong></div>
+        <div class="set-btns">
+            <button class="btn btn-gold btn-sm" onclick="switchProv('volc')">🔥 火山引擎 · 豆包</button>
+            <button class="btn btn-gold btn-sm" onclick="switchProv('deepseek')">🧠 DeepSeek</button>
+        </div>
+    </div>
+    <div class="set-divider"></div>
+    <!-- 语音引擎 -->
+    <div class="set-section" style="margin-bottom:0;">
+        <div class="set-title">🔹 语音引擎</div>
+        <div class="set-sub">当前：<strong id="voiceLabel" style="color:#0078D4;">Edge-TTS 陕西语音</strong></div>
+        <div class="set-btns">
+            <button class="btn btn-gold btn-sm" onclick="switchV('edgetts')">🎧 Edge-TTS</button>
+            <button class="btn btn-gold btn-sm" onclick="switchV('xunfei')">🎙️ 讯飞</button>
+            <button class="btn btn-gold btn-sm" onclick="switchV('webspeech')">🗣️ 浏览器</button>
+        </div>
+    </div>
+</div>
+
+<!-- 服务状态 -->
+<div class="set-card">
+    <div class="set-corner tl"></div><div class="set-corner tr"></div>
+    <div class="set-corner bl"></div><div class="set-corner br"></div>
+    <div class="set-section" style="margin-bottom:0;">
+        <div class="set-title">🔹 服务状态</div>
+        <p class="set-status">Edge-TTS：<span id="etStatus" style="color:var(--brown-l);">未检测</span></p>
+        <p class="set-status" style="margin-top:4px;">调用状态：<span id="apiStatus">就绪</span></p>
+        <button class="btn btn-gold btn-sm" onclick="checkEdgeTTSStatus()" style="margin-top:10px;font-size:16px;">🔍 检测连接</button>
+    </div>
+</div>
+
+</div>
+<img src="img/关公皮影.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/屏风.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+function switchProv(p){STATE.provider=p;document.getElementById('providerLabel').textContent=p==='deepseek'?'DeepSeek':'火山引擎·豆包';}
+function switchV(e){setVoiceEngine(e);var l=document.getElementById('voiceLabel');if(e==='edgetts'){l.textContent='Edge-TTS 陕西语音';l.style.color='#0078D4';}else if(e==='xunfei'){l.textContent='讯飞方言语音';l.style.color='var(--red)';}else{l.textContent='Web Speech 浏览器语音';l.style.color='var(--jade)';}}
+async function checkEdgeTTSStatus(){
+    var st=document.getElementById('etStatus');st.textContent='检测中...';st.style.color='var(--brown-l)';
+    try{var r=await fetch(EDGE_TTS.apiUrl+'/health',{signal:AbortSignal.timeout(5000)});st.textContent=r.ok?'在线':'离线';st.style.color=r.ok?'var(--jade)':'var(--red)';}
+    catch(e){st.textContent='离线';st.style.color='var(--red)';}
+}
+(function(){document.getElementById('providerLabel').textContent=STATE.provider==='deepseek'?'DeepSeek':'火山引擎·豆包';var eng=getVoiceEngine(),l=document.getElementById('voiceLabel');if(eng==='edgetts'){l.textContent='Edge-TTS 陕西语音';l.style.color='#0078D4';}else if(eng==='xunfei'){l.textContent='讯飞方言语音';l.style.color='var(--red)';}else{l.textContent='Web Speech 浏览器语音';l.style.color='var(--jade)';}checkEdgeTTSStatus();})();
+function fadeTo(u){document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';setTimeout(function(){window.location.href=u;},150);}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});});
+</script>
+</body>
+</html>

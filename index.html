@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦言三韵 · 掌上长安数字驿站</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<div class="layout">
+    <!-- ======== SIDEBAR ======== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">秦言三韵</div>
+        <div class="sidebar-sub">掌 上 长 安</div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-sec">功 能</div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="on"><span class="si">🏠</span>首页总览</a>
+            <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+            <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+            <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+        </nav>
+        <div class="sidebar-sec">互 动</div>
+        <nav class="sidebar-nav">
+            <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+            <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+            <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+        </nav>
+        <div class="sidebar-sec">系 统</div>
+        <nav class="sidebar-nav">
+            <a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a>
+        </nav>
+        <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+    </aside>
+
+    <!-- ======== MAIN ======== -->
+    <main class="main">
+        <div class="hero">
+            <h1>秦言三韵</h1>
+            <div class="sub">陕西地域方言智能文创</div>
+            <div class="desc">融合 AI 大模型方言转译 · 语音克隆 · 文化科普<br>三秦古韵，声生不息</div>
+            <img src="img/hero-border1.png" class="hero-deco-r1" alt="">
+            <img src="img/hero-border2.png" class="hero-deco-r2" alt="">
+        </div>
+
+        <div class="content-area">
+            <!-- 每日老陕谚语 -->
+            <div id="dailyProverb" style="text-align:center;padding:18px 24px 14px;margin-bottom:8px;font-size:16px;color:var(--brown);font-family:'STKaiti','KaiTi',serif;letter-spacing:2px;line-height:1.6;opacity:0.8;"></div>
+
+            <div class="sec-head">🤖 赛博老陕 · AI 专区</div>
+            <div class="grid-3">
+                <a class="grid-card ai" href="translate.html">
+                    <span class="gc-icon">🗣️</span>
+                    <span class="gc-label">乡音翻译机</span>
+                    <div class="gc-desc">普通话转关中/陕北/陕南纯正方言，支持语音朗读</div>
+                </a>
+                <a class="grid-card ai" href="classical.html">
+                    <span class="gc-icon">🏮</span>
+                    <span class="gc-label">大唐雅言</span>
+                    <div class="gc-desc">现代文旅文案一键转为长安古风雅句</div>
+                </a>
+                <a class="grid-card ai" href="dict.html">
+                    <span class="gc-icon">📖</span>
+                    <span class="gc-label">秦字解码局</span>
+                    <div class="gc-desc">方言生僻字发音·释义·地域·典故全解析</div>
+                </a>
+            </div>
+
+            <div class="sec-head">🎪 游园市井 · 互动专区</div>
+            <div class="grid-3">
+                <a class="grid-card fun" href="quiz.html">
+                    <span class="gc-icon">📝</span>
+                    <span class="gc-label">方言八级考</span>
+                    <div class="gc-desc">三道趣味陕西方言题，测测你是不是地道老陕</div>
+                </a>
+                <a class="grid-card fun" href="fortune.html">
+                    <span class="gc-icon">🎋</span>
+                    <span class="gc-label">长安祈福签</span>
+                    <div class="gc-desc">摇签筒抽好运签，八支长安风格签文等你来</div>
+                </a>
+                <a class="grid-card fun" href="roulette.html">
+                    <span class="gc-icon">🎰</span>
+                    <span class="gc-label">吃货大转盘</span>
+                    <div class="gc-desc">肉夹馍凉皮葫芦头，转盘决定今晚吃什么</div>
+                </a>
+            </div>        </div>
+    </main>
+</div>
+
+<script>
+// 随机老陕谚语
+(function(){
+    var proverbs = [
+        '「人哄地皮，地哄肚皮」—— 关中人朴实，做事讲实在',
+        '「米脂的婆姨绥德的汉」—— 陕北出美人与好汉',
+        '「秦岭一条线，南吃大米北吃面」—— 一山分南北，饮食各不同',
+        '「不吃凉粉腾板凳」—— 别占着位置不干事',
+        '「陕西黄土埋皇上」—— 自古帝王多葬于此',
+        '「八百里秦川尘土飞扬，三千万老陕齐吼秦腔」—— 关中人的豪迈',
+        '「面条像裤带，辣子一道菜」—— 关中八大怪之一',
+        '「有钱没钱，咥碗面先」—— 一碗面就是老陕的踏实',
+        '「羊肉泡馍慢慢掰」—— 长安味道急不得',
+        '「十个老陕九个爱咥面」—— 面食是刻在骨子里的」
+    ];
+    var p = proverbs[Math.floor(Math.random() * proverbs.length)];
+    document.getElementById('dailyProverb').textContent = p;
+})();
+
+function fadeTo(url){
+    document.body.style.opacity='0';document.body.style.transition='opacity 0.15s ease-out';
+    setTimeout(function(){window.location.href=url;},150);
+}
+document.querySelectorAll('.grid-card,.sidebar-nav a').forEach(function(el){
+    el.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});
+});
+</script>
+</body>
+</html>

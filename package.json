@@ -1,0 +1,48 @@
+{
+  "name": "qinyan-dialect",
+  "version": "1.0.0",
+  "description": "秦言三韵 · 掌上长安 —— 陕西方言智能文创平台",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.qinyan.dialect",
+    "productName": "秦言三韵",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*.html",
+      "**/*.css",
+      "**/*.js",
+      "**/*.py",
+      "**/*.txt",
+      "img/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "tts_server.py",
+        "to": "tts_server.py"
+      },
+      {
+        "from": "requirements_tts.txt",
+        "to": "requirements_tts.txt"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "language": "2052"
+    }
+  }
+}

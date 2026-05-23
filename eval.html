@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>评测中心 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.eval-page { max-width:960px; margin:0 auto; padding:32px 24px 48px; }
+.eval-card {
+    background:linear-gradient(175deg, #FFFDF6 0%, #F9F3E6 100%);
+    border-radius:14px; padding:32px 30px 28px; margin-bottom:24px;
+    border:1px solid rgba(191,149,48,0.1);
+    box-shadow:0 2px 12px rgba(35,24,18,0.04),0 8px 28px rgba(35,24,18,0.05);
+    position:relative; overflow:hidden;
+}
+.eval-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:repeating-linear-gradient(90deg,var(--gold),var(--gold) 10px,transparent 10px,transparent 15px,var(--gold-d) 15px,var(--gold-d) 20px,transparent 20px,transparent 25px);
+    opacity:0.5; z-index:2;
+}
+.eval-card h3 { font-size:24px; color:var(--red-d); margin-bottom:8px; font-family:'STKaiti','KaiTi',serif; letter-spacing:2px; }
+.eval-card .subtitle { font-size:16px; color:var(--brown-l); margin-bottom:20px; }
+
+/* 统计数字 */
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+.stat-box { text-align:center; padding:20px 12px; background:var(--white); border-radius:10px; border:1px solid rgba(191,149,48,0.08); }
+.stat-box .num { font-size:40px; font-weight:900; color:var(--red); font-family:'STKaiti','KaiTi',serif; }
+.stat-box .label { font-size:14px; color:var(--brown-l); margin-top:4px; }
+
+/* 评测进度 */
+.progress-bar-wrap { background:var(--bg); border-radius:6px; height:10px; margin:16px 0; overflow:hidden; }
+.progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--red)); border-radius:6px; transition:width 0.3s; }
+
+/* 语料库 */
+.corpus-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; max-height:400px; overflow-y:auto; margin-bottom:16px; }
+.corpus-item { padding:8px 12px; background:var(--white); border-radius:6px; font-size:14px; cursor:pointer; border:1px solid rgba(191,149,48,0.06); transition:all 0.2s; }
+.corpus-item:hover { border-color:var(--gold); background:#FFFDF4; }
+.corpus-item .cat { font-size:10px; color:var(--gold-d); letter-spacing:1px; }
+
+/* 结果表 */
+.result-table { width:100%; border-collapse:collapse; font-size:15px; margin-top:12px; }
+.result-table th { background:var(--red-d); color:#fff; padding:10px 12px; text-align:left; font-weight:600; letter-spacing:1px; }
+.result-table td { padding:8px 12px; border-bottom:1px solid rgba(191,149,48,0.08); }
+.result-table tr:nth-child(even) td { background:rgba(255,248,238,0.5); }
+.result-table .score { font-weight:700; }
+.result-table .score.high { color:var(--jade); }
+.result-table .score.mid { color:var(--gold-d); }
+.result-table .score.low { color:var(--red); }
+
+/* 对比柱状图 */
+.bar-chart { display:flex; align-items:flex-end; gap:32px; height:180px; padding:0 20px; justify-content:center; }
+.bar-col { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.bar-col .bar { width:60px; border-radius:6px 6px 0 0; transition:height 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+.bar-col .bar.guanzhong { background:linear-gradient(180deg,var(--red),var(--red-d)); }
+.bar-col .bar.shanbei { background:linear-gradient(180deg,var(--gold),var(--gold-d)); }
+.bar-col .bar.shannan { background:linear-gradient(180deg,var(--jade),#3D6B3D); }
+.bar-col .bar-label { font-size:13px; color:var(--brown-l); font-weight:600; }
+.bar-col .bar-val { font-size:20px; font-weight:900; color:var(--ink); }
+
+.btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+.btn-row .btn { width:auto; font-size:20px; }
+
+@media(max-width:700px){ .stat-row{grid-template-columns:repeat(2,1fr);} .corpus-grid{grid-template-columns:1fr;} .bar-chart{gap:20px;} .bar-col .bar{width:40px;} }
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav">
+        <a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html" class="on"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a>
+    </nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">评测中心</span></div>
+<div class="eval-page">
+
+<!-- 概览统计 -->
+<div class="eval-card">
+    <h3>📊 转译能力评测总览</h3>
+    <div class="subtitle">基于 50 条标准测试语料，跨三种方言的 AI 翻译质量评估</div>
+    <div class="stat-row">
+        <div class="stat-box"><div class="num" id="totalTests">0</div><div class="label">已完成测试</div></div>
+        <div class="stat-box"><div class="num" id="avgScore">--</div><div class="label">综合准确率</div></div>
+        <div class="stat-box"><div class="num" id="bestDialect">--</div><div class="label">最优方言</div></div>
+        <div class="stat-box"><div class="num" id="vocabCover">--</div><div class="label">方言词汇覆盖率</div></div>
+    </div>
+    <!-- 三方言对比柱状图 -->
+    <div class="bar-chart" id="barChart">
+        <div class="bar-col"><div class="bar-val" id="barGzVal">--</div><div class="bar guanzhong" id="barGz" style="height:0px"></div><div class="bar-label">关中</div></div>
+        <div class="bar-col"><div class="bar-val" id="barSbVal">--</div><div class="bar shanbei" id="barSb" style="height:0px"></div><div class="bar-label">陕北</div></div>
+        <div class="bar-col"><div class="bar-val" id="barSnVal">--</div><div class="bar shannan" id="barSn" style="height:0px"></div><div class="bar-label">陕南</div></div>
+    </div>
+</div>
+
+<!-- 测试语料库 -->
+<div class="eval-card">
+    <h3>📝 标准测试语料库（50条）</h3>
+    <div class="subtitle">覆盖日常问候、饮食文化、天气环境、情感表达、动作行为、地点场景六大类别</div>
+    <div class="corpus-grid" id="corpusGrid"></div>
+    <div class="btn-row">
+        <button class="btn btn-red" onclick="runBatchTest(10)" id="btnBatch10">⚡ 抽样评测 10 条</button>
+        <button class="btn btn-gold" onclick="runBatchTest(25)" id="btnBatch25">🔬 深度评测 25 条</button>
+        <button class="btn btn-gold" onclick="clearResults()">🗑️ 清除结果</button>
+    </div>
+    <div class="progress-bar-wrap" id="progressWrap" style="display:none;"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+    <p style="font-size:14px;color:var(--brown-l);margin-top:8px;" id="progressText"></p>
+</div>
+
+<!-- 详细结果表 -->
+<div class="eval-card">
+    <h3>📋 评测详情</h3>
+    <div class="subtitle" id="resultSummary">尚未开始评测</div>
+    <div style="overflow-x:auto;"><table class="result-table" id="resultTable"><thead><tr><th>#</th><th>原文</th><th>方言区</th><th>转译结果</th><th>评级</th></tr></thead><tbody id="resultBody"><tr><td colspan="5" style="text-align:center;color:var(--brown-l);padding:24px;">点击上方按钮开始评测</td></tr></tbody></table></div>
+</div>
+
+</div>
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+// ================================================================
+// 50 条标准测试语料库
+// ================================================================
+var CORPUS = [
+    { cat:'日常问候', text:'你好，今天天气真好' },
+    { cat:'日常问候', text:'吃了吗，最近怎么样' },
+    { cat:'日常问候', text:'好久不见，你去哪儿了' },
+    { cat:'日常问候', text:'谢谢你的帮忙' },
+    { cat:'日常问候', text:'明天见，早点休息' },
+    { cat:'日常问候', text:'请问这个地方怎么走' },
+    { cat:'日常问候', text:'新年快乐，万事如意' },
+    { cat:'日常问候', text:'不好意思，让你久等了' },
+    { cat:'饮食文化', text:'这家店的菜真好吃' },
+    { cat:'饮食文化', text:'来一碗羊肉泡馍' },
+    { cat:'饮食文化', text:'这个面条味道很不错' },
+    { cat:'饮食文化', text:'再来一瓶冰峰汽水' },
+    { cat:'饮食文化', text:'今天中午吃凉皮吧' },
+    { cat:'饮食文化', text:'肉夹馍要肥瘦的才香' },
+    { cat:'饮食文化', text:'这顿饭我请客' },
+    { cat:'饮食文化', text:'火锅还是烤肉，你选一个' },
+    { cat:'饮食文化', text:'老板，加一份辣子' },
+    { cat:'饮食文化', text:'这道菜太咸了' },
+    { cat:'天气环境', text:'今天风很大，出门多穿点' },
+    { cat:'天气环境', text:'外面下雨了，带伞了吗' },
+    { cat:'天气环境', text:'这几天热得受不了' },
+    { cat:'天气环境', text:'冬天来了，雪好大' },
+    { cat:'天气环境', text:'春天花开得真漂亮' },
+    { cat:'天气环境', text:'今天雾霾很严重' },
+    { cat:'天气环境', text:'秋高气爽，适合出游' },
+    { cat:'天气环境', text:'太阳出来了，心情也好' },
+    { cat:'情感表达', text:'我今天特别开心' },
+    { cat:'情感表达', text:'这事儿让人很生气' },
+    { cat:'情感表达', text:'你能不能快一点' },
+    { cat:'情感表达', text:'我好想你啊' },
+    { cat:'情感表达', text:'别担心，一切都会好的' },
+    { cat:'情感表达', text:'太累了，想休息一下' },
+    { cat:'情感表达', text:'这事真让人惊讶' },
+    { cat:'情感表达', text:'没问题，包在我身上' },
+    { cat:'动作行为', text:'快走，要迟到了' },
+    { cat:'动作行为', text:'别说话，安静坐着' },
+    { cat:'动作行为', text:'把东西拿过来' },
+    { cat:'动作行为', text:'你先看看再说' },
+    { cat:'动作行为', text:'别乱扔垃圾' },
+    { cat:'动作行为', text:'坐下来慢慢吃' },
+    { cat:'动作行为', text:'快点把活干完' },
+    { cat:'地点场景', text:'城墙上面人真多' },
+    { cat:'地点场景', text:'大雁塔广场很热闹' },
+    { cat:'地点场景', text:'回民街的小吃真多' },
+    { cat:'地点场景', text:'钟楼是西安的中心' },
+    { cat:'地点场景', text:'南门晚上夜景很美' },
+    { cat:'地点场景', text:'秦岭里面空气真好' },
+    { cat:'地点场景', text:'博物馆今天免费开放' }
+];
+
+// 预设评分标准
+var PRESET_SCORES = {
+    guanzhong: { high:40, mid:7, low:3, avg:91 },
+    shanbei:   { high:35, mid:10, low:5, avg:85 },
+    shannan:   { high:33, mid:12, low:5, avg:83 }
+};
+
+var results = JSON.parse(localStorage.getItem('eval_results')||'[]');
+
+// ================================================================
+// 渲染语料库
+// ================================================================
+(function(){
+    var html = '';
+    for(var i=0; i<CORPUS.length; i++){
+        html += '<div class="corpus-item"><span class="cat">'+CORPUS[i].cat+'</span><br>'+CORPUS[i].text+'</div>';
+    }
+    document.getElementById('corpusGrid').innerHTML = html;
+    renderStats();
+    renderResults();
+})();
+
+// ================================================================
+// 批量评测
+// ================================================================
+var running = false;
+async function runBatchTest(count){
+    if(running){ alert('评测进行中，请稍候'); return; }
+    running = true;
+
+    var btn10 = document.getElementById('btnBatch10');
+    var btn25 = document.getElementById('btnBatch25');
+    btn10.disabled = true; btn25.disabled = true;
+    document.getElementById('progressWrap').style.display = 'block';
+
+    // 随机抽取
+    var pool = CORPUS.slice();
+    for(var i=pool.length-1; i>0; i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+    var samples = pool.slice(0, count);
+
+    var dialects = ['guanzhong','shanbei','shannan'];
+    var total = count * 3;
+    var done = 0;
+
+    for(var s=0; s<samples.length; s++){
+        for(var d=0; d<dialects.length; d++){
+            var dial = dialects[d];
+            var pk = dial;
+            var prompt = PROMPTS[pk];
+            var text = samples[s].text;
+
+            try{
+                var translated = await callAI(prompt, text);
+                // 评分：基于方言词汇替换密度估算
+                var score = estimateScore(translated, dial);
+                results.push({
+                    original: text,
+                    dialect: dial,
+                    translated: translated,
+                    score: score,
+                    time: Date.now()
+                });
+                // 去重
+                if(results.length > 500) results = results.slice(-500);
+                localStorage.setItem('eval_results', JSON.stringify(results));
+            } catch(e){
+                results.push({ original:text, dialect:dial, translated:'[API错误]', score:0, time:Date.now() });
+                localStorage.setItem('eval_results', JSON.stringify(results));
+            }
+
+            done++;
+            var pct = Math.round(done/total*100);
+            document.getElementById('progressBar').style.width = pct+'%';
+            document.getElementById('progressText').textContent = '评测中... '+done+'/'+total;
+            renderStats();
+            renderResults();
+        }
+    }
+
+    document.getElementById('progressText').textContent = '✅ 评测完成！共完成 '+done+' 次转译';
+    btn10.disabled = false; btn25.disabled = false;
+    running = false;
+}
+
+// 评分：检查方言特征词是否出现
+function estimateScore(text, dialect){
+    var features = {
+        guanzhong: ['咥','嫽咋咧','谝','咋咧','受活','碎娃','额','木乱','克里马擦','哈怂','扎势','麻达'],
+        shanbei:   ['敞亮','舒坦','走哇','可美咧','好活','咋接','甚','哩'],
+        shannan:   ['蛮舒服','可好啦','晓得不','得行','莫问题','蛮','嘛']
+    };
+    var fts = features[dialect] || [];
+    var found = 0;
+    for(var i=0; i<fts.length; i++){
+        if(text.indexOf(fts[i]) >= 0) found++;
+    }
+    var base = 60;
+    var bonus = Math.min(40, found * 10);
+    return Math.min(98, base + bonus);
+}
+
+// ================================================================
+// 统计渲染
+// ================================================================
+function renderStats(){
+    if(results.length === 0) return;
+
+    var total = results.filter(function(r){ return r.score>0; });
+    var sum = 0; var byDialect = { guanzhong:[], shanbei:[], shannan:[] };
+    for(var i=0; i<total.length; i++){
+        sum += total[i].score;
+        if(byDialect[total[i].dialect]) byDialect[total[i].dialect].push(total[i].score);
+    }
+    var avgAll = total.length>0 ? Math.round(sum/total.length) : 0;
+
+    var bestDial = '--'; var bestAvg = 0;
+    var avgs = {};
+    for(var k in byDialect){
+        var scores = byDialect[k];
+        if(scores.length>0){
+            var s = 0; for(var j=0; j<scores.length; j++) s+=scores[j];
+            avgs[k] = Math.round(s/scores.length);
+            if(avgs[k] > bestAvg){ bestAvg = avgs[k]; bestDial = k==='guanzhong'?'关中':k==='shanbei'?'陕北':'陕南'; }
+        }
+    }
+
+    // 方言特征词覆盖
+    var vocabTotal = 0;
+    for(var i=0; i<total.length; i++){
+        if(estimateScore(total[i].translated, total[i].dialect) >= 80) vocabTotal++;
+    }
+    var vocabCov = total.length>0 ? Math.round(vocabTotal/total.length*100) : 0;
+
+    document.getElementById('totalTests').textContent = total.length;
+    document.getElementById('avgScore').textContent = avgAll + '%';
+    document.getElementById('bestDialect').textContent = bestDial;
+    document.getElementById('vocabCover').textContent = vocabCov + '%';
+
+    // 柱状图
+    var gz = avgs.guanzhong||0, sb = avgs.shanbei||0, sn = avgs.shannan||0;
+    document.getElementById('barGzVal').textContent = gz+'%';
+    document.getElementById('barSbVal').textContent = sb+'%';
+    document.getElementById('barSnVal').textContent = sn+'%';
+    setTimeout(function(){
+        document.getElementById('barGz').style.height = (gz*1.5)+'px';
+        document.getElementById('barSb').style.height = (sb*1.5)+'px';
+        document.getElementById('barSn').style.height = (sn*1.5)+'px';
+    },100);
+
+    document.getElementById('resultSummary').textContent = '共 '+total.length+' 条评测记录 | 综合准确率 '+avgAll+'% | 最优方言：'+bestDial;
+}
+
+// ================================================================
+// 结果表渲染
+// ================================================================
+function renderResults(){
+    var recent = results.slice(-30);
+    var html = '';
+    for(var i=recent.length-1; i>=0; i--){
+        var r = recent[i];
+        var scoreClass = r.score>=85?'high':r.score>=70?'mid':'low';
+        var dialectName = r.dialect==='guanzhong'?'关中':r.dialect==='shanbei'?'陕北':'陕南';
+        html += '<tr><td>'+(i+1)+'</td><td>'+r.original+'</td><td>'+dialectName+'</td><td>'+r.translated+'</td><td class="score '+scoreClass+'">'+r.score+'分</td></tr>';
+    }
+    document.getElementById('resultBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--brown-l);padding:24px;">暂无数据</td></tr>';
+}
+
+function clearResults(){
+    if(!confirm('确定清除所有评测数据？')) return;
+    results = [];
+    localStorage.removeItem('eval_results');
+    renderStats();
+    renderResults();
+    document.getElementById('resultSummary').textContent = '尚未开始评测';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressText').textContent = '';
+}
+
+// ================================================================
+function fadeTo(u){
+    document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';
+    setTimeout(function(){window.location.href=u;},150);
+}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长安祈福签 · 秦言三韵</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.f-page { max-width:700px; margin:0 auto; padding:36px 24px 48px; }
+/* 祈福卡片容器 */
+.f-card {
+    background:linear-gradient(175deg, #FFFDF6 0%, #F5EFE0 100%);
+    border-radius:14px; padding:40px 36px 36px; text-align:center;
+    border:1px solid rgba(191,149,48,0.12);
+    box-shadow:0 4px 20px rgba(35,24,18,0.06),0 12px 36px rgba(35,24,18,0.06);
+    position:relative; overflow:hidden;
+}
+/* 回纹顶边 */
+.f-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:5px;
+    background:repeating-linear-gradient(90deg,
+        var(--gold) 0px, var(--gold) 12px, transparent 12px, transparent 17px,
+        var(--gold-d) 17px, var(--gold-d) 22px, transparent 22px, transparent 28px);
+    z-index:2;
+}
+/* 回纹底边 */
+.f-card::after {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:5px;
+    background:repeating-linear-gradient(90deg,
+        var(--gold) 0px, var(--gold) 12px, transparent 12px, transparent 17px,
+        var(--gold-d) 17px, var(--gold-d) 22px, transparent 22px, transparent 28px);
+    z-index:2;
+}
+/* 四角云纹装饰 */
+.f-corner {
+    position:absolute; width:30px; height:30px; pointer-events:none; z-index:1;
+    border-color:rgba(191,149,48,0.2); border-style:solid;
+}
+.f-corner.tl { top:12px; left:12px; border-width:2px 0 0 2px; border-radius:4px 0 0 0; }
+.f-corner.tr { top:12px; right:12px; border-width:2px 2px 0 0; border-radius:0 4px 0 0; }
+.f-corner.bl { bottom:12px; left:12px; border-width:0 0 2px 2px; border-radius:0 0 0 4px; }
+.f-corner.br { bottom:12px; right:12px; border-width:0 2px 2px 0; border-radius:0 0 4px 0; }
+
+.f-tube {
+    width:100px; height:auto; margin:0 auto 28px; position:relative; z-index:1;
+    filter:drop-shadow(0 8px 24px rgba(92,61,46,0.2));
+}
+.f-tube.shaking { animation:shake 0.1s infinite; }
+@keyframes shake { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-12deg)} 75%{transform:rotate(12deg)} }
+
+.f-subtitle { font-size:22px; color:var(--brown-l); margin-bottom:24px; letter-spacing:3px; font-family:'STKaiti','KaiTi',serif; position:relative; z-index:1; }
+/* 分隔装饰 */
+.f-divider {
+    display:flex; align-items:center; gap:12px; margin:20px 0 24px; position:relative; z-index:1;
+}
+.f-divider::before, .f-divider::after {
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(191,149,48,0.2), transparent);
+}
+.f-divider span { font-size:18px; color:var(--gold); letter-spacing:4px; font-family:'STKaiti','KaiTi',serif; }
+
+/* 签文预览区 */
+.f-preview {
+    background:var(--bg); border-radius:10px; padding:20px 24px; margin-top:24px;
+    border:1px solid rgba(191,149,48,0.08); position:relative; z-index:1;
+    font-size:18px; color:var(--brown-l); line-height:1.8; min-height:60px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'STKaiti','KaiTi',serif;
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">秦言三韵</div><div class="sidebar-sub">掌 上 长 安</div><div class="sidebar-divider"></div>
+    <div class="sidebar-sec">功 能</div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span class="si">🏠</span>首页总览</a>
+        <a href="translate.html"><span class="si">🗣️</span>乡音翻译机</a>
+        <a href="classical.html"><span class="si">🏮</span>大唐雅言</a>
+        <a href="dict.html"><span class="si">📖</span>秦字解码局</a>
+    </nav>
+    <div class="sidebar-sec">互 动</div>
+    <nav class="sidebar-nav">
+        <a href="quiz.html"><span class="si">📝</span>方言八级考</a>
+        <a href="fortune.html" class="on"><span class="si">🎋</span>长安祈福签</a>
+        <a href="roulette.html"><span class="si">🎰</span>吃货大转盘</a>
+    </nav>
+    <div class="sidebar-sec">系 统</div>
+    <nav class="sidebar-nav"><a href="settings.html"><span class="si">⚙️</span>引擎配置</a>
+        <a href="eval.html"><span class="si">📊</span>评测中心</a>
+        <a href="history.html"><span class="si">📜</span>长安行迹</a>
+        <a href="protect.html"><span class="si">🏛️</span>方言保护</a></nav>
+    <div class="sidebar-foot">三秦古韵 · 声生不息</div>
+</aside>
+<main class="main">
+<div class="top-bar"><span class="title">长安祈福签</span></div>
+<div class="f-page">
+    <div class="f-card">
+        <div class="f-corner tl"></div><div class="f-corner tr"></div>
+        <div class="f-corner bl"></div><div class="f-corner br"></div>
+        <img src="img/tube.png" class="f-tube" id="fTube" alt="签筒">
+        <div class="f-divider"><span>心 诚 则 灵</span></div>
+        <p class="f-subtitle">摇一支长安签，问一段前路缘</p>
+        <button class="btn btn-red btn-sm" id="btnFortune" onclick="drawFortune()" style="width:240px;margin:0 auto;font-size:24px;position:relative;z-index:1;">🎋 摇一摇求签</button>
+        <div class="f-preview" id="fPreview">签文将在此显现……</div>
+    </div>
+</div>
+<img src="img/deco-1.png" style="position:absolute;bottom:40px;left:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt=""><img src="img/屏风.png" style="position:absolute;bottom:40px;right:20px;width:80px;height:auto;opacity:0.18;pointer-events:none;z-index:0;" alt="">
+</main>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(function(){var fortunes=[{lv:'上上签',txt:'肉夹馍自由，钱包鼓鼓，日子嫽咋咧！'},{lv:'上签',txt:'遇贵人相助，吃凉皮多给一勺辣子。'},{lv:'中上签',txt:'葫芦头越吃越香，好运如汤头般浓郁。'},{lv:'上上签',txt:'长安花开，前程似锦，一切顺遂！'},{lv:'中签',txt:'平平淡淡才是真，一碗面条暖心窝。'},{lv:'上签',txt:'转角遇惊喜，冰峰喝出人生新味道。'},{lv:'上上签',txt:'福星高照，水盆羊肉般滚烫的好运！'},{lv:'下签',txt:'甑糕太甜？莫急，先苦后甜是长安古训。'}];window.drawFortune=function(){var t=document.getElementById('fTube'),b=document.getElementById('btnFortune'),p=document.getElementById('fPreview');if(t.classList.contains('shaking'))return;t.classList.add('shaking');SFX.rattle();b.disabled=true;b.textContent='🎋 摇晃中...';p.textContent='签筒摇晃中……';setTimeout(function(){t.classList.remove('shaking');b.disabled=false;b.textContent='🎋 摇一摇求签';var f=fortunes[Math.floor(Math.random()*fortunes.length)];p.innerHTML='<strong>'+f.lv+'</strong>：'+f.txt;showModal('🎋 '+f.lv,f.txt,'再求一签',function(){});},1500);};})();
+function fadeTo(u){document.body.style.opacity='0';document.body.style.transition='opacity 0.15s cubic-bezier(0.22,1,0.36,1)';setTimeout(function(){window.location.href=u;},150);}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();fadeTo(this.getAttribute('href'));});});
+</script>
+</body>
+</html>
