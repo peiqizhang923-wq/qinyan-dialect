@@ -11,5 +11,8 @@ var CONFIG = {
     // 讯飞 TTS（可选，不填则自动降级到 Edge-TTS）
     XF_APP_ID:     'YOUR_XUNFEI_APP_ID',
     XF_API_KEY:    'YOUR_XUNFEI_API_KEY',
-    XF_API_SECRET: 'YOUR_XUNFEI_API_SECRET'
+    XF_API_SECRET: 'YOUR_XUNFEI_API_SECRET',
+
+    // 后端数据库地址（默认本地 9881 端口）
+    DB_URL: 'http://localhost:9881'
 };

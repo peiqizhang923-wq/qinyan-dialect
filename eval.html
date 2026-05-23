@@ -257,9 +257,12 @@ async function runBatchTest(count){
                 // 去重
                 if(results.length > 500) results = results.slice(-500);
                 localStorage.setItem('eval_results', JSON.stringify(results));
+                // 同步到后端数据库
+                syncEvalToBackend(text, dial, translated, score);
             } catch(e){
                 results.push({ original:text, dialect:dial, translated:'[API错误]', score:0, time:Date.now() });
                 localStorage.setItem('eval_results', JSON.stringify(results));
+                syncEvalToBackend(text, dial, '[API错误]', 0);
             }
 
             done++;

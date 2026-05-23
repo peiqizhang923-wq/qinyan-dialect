@@ -3,65 +3,61 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 let mainWindow = null;
-let pythonProc = null;
+let pythonProc = null;  // TTS server
+let dbProc = null;      // DB server
 
-// ── 启动 Python TTS 服务器 ──────────────────────────────
-function startTTSServer() {
+// ── 启动 Python 子服务 ──────────────────────────────
+function startPythonServer(script, port, label) {
     return new Promise((resolve) => {
         try {
-            pythonProc = spawn('python', ['tts_server.py'], {
+            const proc = spawn('python', [script], {
                 cwd: __dirname,
                 windowsHide: true,
                 stdio: ['ignore', 'pipe', 'pipe']
             });
 
-            pythonProc.on('error', () => {
-                console.log('[TTS] Python not found — TTS will fallback to Web Speech');
-                pythonProc = null;
-                resolve(false);
+            proc.on('error', () => {
+                console.log('[' + label + '] Python not found');
+                resolve(null);
             });
 
-            pythonProc.on('exit', (code) => {
-                console.log('[TTS] Python process exited (code ' + code + ')');
-                pythonProc = null;
+            proc.on('exit', (code) => {
+                console.log('[' + label + '] Process exited (code ' + code + ')');
             });
 
-            // 轮询 health 端点等待就绪
+            // 轮询 health 端点
             var attempts = 0;
-            var maxAttempts = 20; // 10 秒
+            var maxAttempts = 20;
             var check = setInterval(function () {
                 attempts++;
-                var req = require('http').get('http://localhost:9880/health', function (res) {
+                var req = require('http').get('http://localhost:' + port + '/health', function (res) {
                     if (res.statusCode === 200) {
                         clearInterval(check);
-                        console.log('[TTS] Edge-TTS server ready on :9880');
-                        resolve(true);
+                        console.log('[' + label + '] Ready on :' + port);
+                        resolve(proc);
                     }
                 });
                 req.on('error', function () {
                     if (attempts >= maxAttempts) {
                         clearInterval(check);
-                        console.log('[TTS] Server startup timeout — continuing anyway');
-                        resolve(false);
+                        console.log('[' + label + '] Startup timeout — continuing');
+                        resolve(proc);
                     }
                 });
-                req.setTimeout(1000, function () {
-                    req.destroy();
-                });
+                req.setTimeout(1000, function () { req.destroy(); });
             }, 500);
 
         } catch (e) {
-            console.log('[TTS] Failed to start: ' + e.message);
-            resolve(false);
+            console.log('[' + label + '] Failed: ' + e.message);
+            resolve(null);
         }
     });
 }
 
-function stopTTSServer() {
-    if (pythonProc) {
-        pythonProc.kill();
-        pythonProc = null;
-        console.log('[TTS] Server stopped');
+function stopPythonServer(proc, label) {
+    if (proc) {
+        proc.kill();
+        console.log('[' + label + '] Stopped');
     }
 }
 
@@ -95,19 +91,24 @@ function createWindow() {
 
 // ── 应用生命周期 ────────────────────────────────────────
 app.whenReady().then(async function () {
-    await startTTSServer();
+    // 数据库服务（端口9881）
+    dbProc = await startPythonServer('db_server.py', 9881, 'DB');
+    // TTS语音服务（端口9880）
+    pythonProc = await startPythonServer('tts_server.py', 9880, 'TTS');
     createWindow();
 });
 
 app.on('window-all-closed', function () {
-    stopTTSServer();
+    stopPythonServer(pythonProc, 'TTS');
+    stopPythonServer(dbProc, 'DB');
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
 app.on('before-quit', function () {
-    stopTTSServer();
+    stopPythonServer(pythonProc, 'TTS');
+    stopPythonServer(dbProc, 'DB');
 });
 
 app.on('activate', function () {

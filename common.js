@@ -210,13 +210,62 @@ function navigateTo(url){
     setTimeout(function(){ window.location.href=url; }, 150);
 }
 
-// ── 用户历史记录 ──────────────────────────────────
+// ── 后端数据库 API ────────────────────────────────
+var DB_URL = (typeof CONFIG!=='undefined'&&CONFIG.DB_URL)||'http://localhost:9881';
+
+function dbFetch(path, opts){
+    opts = opts || {};
+    var url = DB_URL + path;
+    var init = { method: opts.method || 'GET', headers: {'Content-Type':'application/json'} };
+    if(opts.body) init.body = JSON.stringify(opts.body);
+    return fetch(url, init).then(function(r){
+        if(!r.ok) return r.json().then(function(e){ throw new Error(e.error||'DB error'); });
+        return r.json();
+    });
+}
+
+// 同步历史记录到后端
+function syncHistoryToBackend(type, data){
+    dbFetch('/api/history', {method:'POST', body:{type:type, data:data}}).catch(function(){});
+}
+
+// 同步评测结果到后端
+function syncEvalToBackend(original, dialect, translated, score){
+    dbFetch('/api/eval', {method:'POST', body:{original:original, dialect:dialect, translated:translated, score:score}}).catch(function(){});
+}
+
+// 同步设置到后端
+function syncSettingsToBackend(settings){
+    dbFetch('/api/settings', {method:'POST', body:settings}).catch(function(){});
+}
+
+// 从后端加载历史
+function loadHistoryFromBackend(cb){
+    dbFetch('/api/history?limit=50').then(function(data){ cb(data); }).catch(function(){ cb(null); });
+}
+
+// 从后端加载评测统计
+function loadEvalStatsFromBackend(cb){
+    dbFetch('/api/eval/stats').then(function(data){ cb(data); }).catch(function(){ cb(null); });
+}
+
+// 从后端查询方言词汇
+function queryVocabularyFromBackend(word, region, cb){
+    var q = '/api/vocabulary?';
+    if(word) q += 'word='+encodeURIComponent(word)+'&';
+    if(region) q += 'region='+encodeURIComponent(region);
+    dbFetch(q).then(function(data){ cb(data); }).catch(function(){ cb([]); });
+}
+
+// ── 用户历史记录（本地 + 后端双写）──────────────────
 function saveHistory(type, data){
     var key = 'qy_history';
     var all = JSON.parse(localStorage.getItem(key)||'[]');
     all.unshift({ type:type, data:data, time:Date.now() });
     if(all.length > 200) all = all.slice(0, 200);
     localStorage.setItem(key, JSON.stringify(all));
+    // 异步同步到后端（不阻塞）
+    syncHistoryToBackend(type, data);
 }
 function getHistory(){ return JSON.parse(localStorage.getItem('qy_history')||'[]'); }
 
